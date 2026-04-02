@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
+/* Estilos globales */
+body {
+  @apply bg-dark text-light;
+  font-family: 'Inter', sans-serif;
+}
