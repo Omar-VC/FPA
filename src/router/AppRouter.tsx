@@ -7,8 +7,14 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<RankingPage />} />
-        <Route path="/ranking" element={<RankingPage />} />
+        {/* Rutas de Ranking */}
+        <Route path="/ranking/masculino" element={<RankingPage gender="masculino" />} />
+        <Route path="/ranking/femenino" element={<RankingPage gender="femenino" />} />
+
+        {/* Default: Ranking masculino */}
+        <Route path="/" element={<RankingPage gender="masculino" />} />
+
+        {/* Otras páginas */}
         <Route path="/torneos" element={<TorneosPage />} />
         <Route path="/inscribirse" element={<InscripcionPage />} />
       </Routes>

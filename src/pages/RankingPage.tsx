@@ -1,12 +1,30 @@
 import PublicLayout from "../layouts/PublicLayout";
 
-export default function RankingPage() {
+interface RankingPageProps {
+  gender: "masculino" | "femenino";
+}
+
+export default function RankingPage({ gender }: RankingPageProps) {
+  // Ejemplo de datos mockeados
+  const jugadores = [
+    { nombre: "Juan Pérez", puntos: 1200, genero: "masculino" },
+    { nombre: "Carlos Gómez", puntos: 1150, genero: "masculino" },
+    { nombre: "Ana López", puntos: 980, genero: "femenino" },
+    { nombre: "María Díaz", puntos: 870, genero: "femenino" },
+  ];
+
+  // Filtrar por género
+  const filtrados = jugadores
+    .filter((j) => j.genero === gender)
+    .sort((a, b) => b.puntos - a.puntos);
+
   return (
     <PublicLayout>
       <div className="flex flex-col items-center py-8">
-        <h1 className="text-2xl font-bold text-accent mb-6">Ranking FPA</h1>
+        <h1 className="text-2xl font-bold text-accent mb-6">
+          Ranking {gender === "masculino" ? "Masculino" : "Femenino"}
+        </h1>
 
-        {/* Tabla de ejemplo */}
         <table className="w-3/4 text-left border-collapse">
           <thead>
             <tr className="bg-primary text-light">
@@ -16,16 +34,13 @@ export default function RankingPage() {
             </tr>
           </thead>
           <tbody>
-            <tr className="border-b border-accent">
-              <td className="px-4 py-2">1</td>
-              <td className="px-4 py-2">Juan Pérez</td>
-              <td className="px-4 py-2">1200</td>
-            </tr>
-            <tr className="border-b border-accent">
-              <td className="px-4 py-2">2</td>
-              <td className="px-4 py-2">Carlos Gómez</td>
-              <td className="px-4 py-2">1150</td>
-            </tr>
+            {filtrados.map((j, i) => (
+              <tr key={j.nombre} className="border-b border-accent">
+                <td className="px-4 py-2">{i + 1}</td>
+                <td className="px-4 py-2">{j.nombre}</td>
+                <td className="px-4 py-2">{j.puntos}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
