@@ -1,0 +1,69 @@
+
+/* Pantallas medianas (tablets, laptops chicos) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* ajustar el espacio entre los enlaces en la barra de navegación dame codigos */
+  .navbar {
+    gap: 1.5rem; /* menos espacio que en desktop, más que en móvil */
+  }
+  .big-link {
+    font-size: 15px;
+  }
+  
+  /*agreguemos un hover a los enlaces de la barra de navegación para mejorar la experiencia del usuario en pantallas medianas con efecto de transición y sombra y una pequeña "luz" abajo tipo neon */
+  .big-link:hover {
+    color: #c5e9c1; /* cambia el color al pasar el mouse */
+    text-shadow: 0 0 5px rgba(129, 255, 71, 0.5); /* agrega una sombra suave */
+    transition: all 0.3s ease; /* transición suave para el efecto */
+      /* Agrega un efecto de "luz" tipo neón debajo del enlace */
+    position: relative; /* necesario para posicionar el pseudo-elemento */
+  }
+
+  /*me gustaria darle un efecto de luz laser abajo cuando hago hover */ 
+  .big-link:hover::after {
+    content: ''; /* necesario para crear el pseudo-elemento */
+    position: absolute;
+    left: 0;
+    bottom: -5px; /* ajusta la posición vertical de la "luz" */
+    width: 100%;
+    height: 2px; /* grosor de la "luz" */
+    background: linear-gradient(90deg, transparent, #c5e9c1, transparent); /* gradiente para el efecto de luz */
+    animation: laser 1s infinite; /* animación para el efecto de luz */
+  } 
+
+
+
+  .menu-logo {
+    display: none;
+  }
+}
+
+/* Pantallas grandes (desktop) */
+@media (min-width: 1025px) {
+  .navbar {
+    gap: 3rem;
+  }
+
+  .big-link:hover {
+    color: #c5e9c1; /* cambia el color al pasar el mouse */
+    text-shadow: 0 0 5px rgba(129, 255, 71, 0.5); /* agrega una sombra suave */
+    transition: all 0.3s ease; /* transición suave para el efecto */
+      /* Agrega un efecto de "luz" tipo neón debajo del enlace */
+    position: relative; /* necesario para posicionar el pseudo-elemento */
+  }
+
+  /*me gustaria darle un efecto de luz laser abajo cuando hago hover */ 
+  .big-link:hover::after {
+    content: ''; /* necesario para crear el pseudo-elemento */
+    position: absolute;
+    left: 0;
+    bottom: -5px; /* ajusta la posición vertical de la "luz" */
+    width: 100%;
+    height: 2px; /* grosor de la "luz" */
+    background: linear-gradient(90deg, transparent, #c5e9c1, transparent); /* gradiente para el efecto de luz */
+    animation: laser 1s infinite; /* animación para el efecto de luz */
+  } 
+
+  .menu-logo {
+    display: none;
+  }
+}

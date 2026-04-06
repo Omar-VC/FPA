@@ -1,0 +1,9 @@
+:root {
+  --color-dark: #2a2a2a;
+  --color-green: #408A71;
+  --color-light: #ffffff;
+
+  --font-main: "Inter", sans-serif;
+  --spacing-lg: 2rem;
+  --spacing-md: 1rem;
+}

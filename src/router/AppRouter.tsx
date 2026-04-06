@@ -7,16 +7,15 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rutas de Ranking */}
-        <Route path="/ranking/masculino" element={<RankingPage gender="masculino" />} />
-        <Route path="/ranking/femenino" element={<RankingPage gender="femenino" />} />
-
-        {/* Default: Ranking masculino */}
-        <Route path="/" element={<RankingPage gender="masculino" />} />
+        {/* Ranking con parámetro dinámico */}
+        <Route path="/ranking/:gender" element={<RankingPage />} />
 
         {/* Otras páginas */}
         <Route path="/torneos" element={<TorneosPage />} />
         <Route path="/inscribirse" element={<InscripcionPage />} />
+
+        {/* Default */}
+        <Route path="/" element={<RankingPage />} />
       </Routes>
     </BrowserRouter>
   );
