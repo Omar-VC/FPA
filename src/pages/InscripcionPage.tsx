@@ -7,25 +7,86 @@ export default function InscripcionPage() {
         <h1 className="text-2xl font-bold text-accent mb-6">Inscripción de Jugadores</h1>
 
         <form className="w-3/4 max-w-md bg-dark border border-accent rounded-lg shadow-lg p-6 space-y-4">
+          {/* Nombre */}
           <div className="flex flex-col">
             <label className="text-light font-semibold mb-1">Nombre completo</label>
             <input
               type="text"
               placeholder="Ej: Juan Pérez"
+              required
               className="px-3 py-2 rounded-md bg-primary text-light focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
 
+          {/* Apodo */}
           <div className="flex flex-col">
-            <label className="text-light font-semibold mb-1">Categoría</label>
+            <label className="text-light font-semibold mb-1">Apodo</label>
+            <input
+              type="text"
+              placeholder="Ej: El Toro"
+              className="px-3 py-2 rounded-md bg-primary text-light focus:outline-none focus:ring-2 focus:ring-accent"
+            />
+          </div>
+
+          {/* DNI */}
+          <div className="flex flex-col">
+            <label className="text-light font-semibold mb-1">DNI</label>
+            <input
+              type="text"
+              placeholder="Ej: 12345678"
+              required
+              className="px-3 py-2 rounded-md bg-primary text-light focus:outline-none focus:ring-2 focus:ring-accent"
+            />
+          </div>
+
+          {/* Ciudad */}
+          <div className="flex flex-col">
+            <label className="text-light font-semibold mb-1">Ciudad</label>
+            <input
+              type="text"
+              placeholder="Ej: Añatuya"
+              required
+              className="px-3 py-2 rounded-md bg-primary text-light focus:outline-none focus:ring-2 focus:ring-accent"
+            />
+          </div>
+
+          {/* Sexo */}
+          <div className="flex flex-col">
+            <label className="text-light font-semibold mb-1">Sexo</label>
             <select
               className="px-3 py-2 rounded-md bg-primary text-light focus:outline-none focus:ring-2 focus:ring-accent"
+              required
             >
               <option value="masculino">Masculino</option>
               <option value="femenino">Femenino</option>
             </select>
           </div>
 
+          {/* Nivel */}
+          <div className="flex flex-col">
+            <label className="text-light font-semibold mb-1">Nivel</label>
+            <select
+              className="px-3 py-2 rounded-md bg-primary text-light focus:outline-none focus:ring-2 focus:ring-accent"
+              required
+            >
+              <option value="iniciado">Iniciado</option>
+              <option value="intermedio">Intermedio</option>
+              <option value="avanzado">Avanzado</option>
+            </select>
+          </div>
+
+          {/* Lado */}
+          <div className="flex flex-col">
+            <label className="text-light font-semibold mb-1">Lado</label>
+            <select
+              className="px-3 py-2 rounded-md bg-primary text-light focus:outline-none focus:ring-2 focus:ring-accent"
+            >
+              <option value="revez">Revez</option>
+              <option value="drive">Drive</option>
+            </select>
+          </div>
+
+          {/* Botón */}
           <button
             type="submit"
             className="w-full px-4 py-2 bg-primary text-light rounded-md 
