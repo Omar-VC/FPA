@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
     "@fontsource/poppins": "^5.2.7",
+    "@heroicons/react": "^2.2.0",
     "axios": "^1.14.0",
     "clsx": "^2.1.1",
     "firebase": "^12.11.0",
