@@ -35,6 +35,8 @@ export default function RankingPage() {
             <tr className="bg-primary text-light">
               <th className="px-4 py-2">Posición</th>
               <th className="px-4 py-2">Jugador</th>
+              <th className="px-4 py-2">Apodo</th>
+              <th className="px-4 py-2">Ciudad</th>
               <th className="px-4 py-2">Puntos</th>
             </tr>
           </thead>
@@ -48,7 +50,7 @@ export default function RankingPage() {
                 <>
                   {mostrarSeparador && (
                     <tr key={`sep-${categoria}`} className="bg-dark">
-                      <td colSpan={3} className="text-center text-primary font-semibold py-2">
+                      <td colSpan={5} className="text-center text-primary font-semibold py-2">
                         —— {categoria} ——
                       </td>
                     </tr>
@@ -56,6 +58,8 @@ export default function RankingPage() {
                   <tr key={j.nombre} className="border-b border-accent">
                     <td className="px-4 py-2">{i + 1}</td>
                     <td className="px-4 py-2">{j.nombre}</td>
+                    <td className="px-4 py-2">{j.apodo ?? "-"}</td>
+                    <td className="px-4 py-2">{j.ciudad}</td>
                     <td className="px-4 py-2">{j.puntos}</td>
                   </tr>
                 </>
