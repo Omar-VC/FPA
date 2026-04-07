@@ -1,0 +1,112 @@
+.banner {
+  /* ESTADO GENERAL: estilos base que se aplican SIEMPRE en todas las pantallas */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(
+    to right,
+    #1a3d1a,
+    #316338,
+    #4caf50
+  ); /* degradado verde */
+  color: #f5f5f5;
+}
+
+.banner-icon {
+  /* ESTADO GENERAL: tamaño y margen del ícono en todas las pantallas */
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1rem;
+}
+
+.banner h1 {
+  /* ESTADO GENERAL: título base */
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.banner p {
+  /* ESTADO GENERAL: párrafo base */
+  font-size: 1rem;
+  max-width: 600px;
+}
+
+.banner a {
+  /* ESTADO GENERAL: botón base */
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+  background: #f5f5f5;
+  color: #1a1a1a;
+  font-weight: 600;
+  border-radius: 0.25rem;
+  text-decoration: none;
+}
+
+.banner a:hover {
+  /* ESTADO GENERAL: hover del botón */
+  background: #316338;
+  color: #fff;
+}
+
+/* MEDIA QUERY para pantallas pequeñas (máx 640px) */
+@media (max-width: 640px) {
+  .banner {
+    flex-direction: column; /* ícono arriba, texto debajo */
+    padding: 2rem;
+    min-height: 300px
+  }
+
+  .banner-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 1rem;
+  }
+
+  .banner h1 {
+    font-size: 1.25rem; /* título más chico */
+  }
+
+  .banner p {
+    font-size: 0.9rem; /* párrafo más chico */
+    margin-bottom: 1rem;
+  }
+
+  .banner a {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem; /* botón más chico */
+  }
+}
+
+/* MEDIA QUERY para pantallas medianas/grandes (mín 641px) */
+@media (min-width: 641px) {
+  .banner {
+    flex-direction: row; /* ícono a la izquierda, texto a la derecha */
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .banner-icon {
+    margin-right: 1rem;
+    margin-bottom: 0;
+    width: 64px;
+    height: 64px; /* ícono más grande */
+  }
+
+  .banner h1 {
+    font-size: 1.5rem; /* título más grande */
+  }
+
+  .banner p {
+    font-size: 1rem; /* párrafo más grande */
+    margin-bottom: 1rem;
+  }
+
+  .banner a {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem; /* botón más chico */
+  }
+}

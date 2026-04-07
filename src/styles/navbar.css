@@ -1,3 +1,5 @@
+/* navbar.css */
+
 .navbar {
   background-color: var(--color-dark);
   border-bottom: 3px solid var(--color-green);
@@ -5,6 +7,7 @@
   z-index: 100;
 }
 
+/* Logo */
 .logo-img {
   height: 90px;
   width: auto;
@@ -21,3 +24,57 @@
   font-weight: bold;
   color: var(--color-light);
 }
+
+/* Links */
+.nav-link {
+  color: var(--color-light);
+  font-size: 1.1rem;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--color-green-light);
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: var(--color-green);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Menú hamburguesa */
+.menu-links {
+  background: linear-gradient(180deg, var(--color-dark), var(--color-green-dark));
+  padding: 2rem 1.5rem;
+}
+
+.menu-links li {
+  margin-bottom: 1.5rem;
+}
+
+/* Logo dentro del menú */
+.menu-logo {
+  margin-top: auto;
+  text-align: center;
+  padding-top: 2rem;
+}
+
+.menu-logo img {
+  height: 170px;
+  width: auto;
+  object-fit: contain;
+  margin-top: -100px;
+  filter: drop-shadow(0 0 8px var(--color-green-light));
+}
+

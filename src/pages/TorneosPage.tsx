@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 import { torneos } from "../modules/torneos/data";
 import { TrophyIcon } from "@heroicons/react/24/solid";
+import "../styles/banner.css";
 
 export default function TorneosPage() {
   const [selectedTorneo, setSelectedTorneo] = useState<string | null>(null);
@@ -10,34 +11,25 @@ export default function TorneosPage() {
   return (
     <PublicLayout>
       <div className="flex flex-col items-center py-8">
-        {/* Banner con Heroicon */}
-        <div className="w-full bg-gradient-to-r from-dark via-primary to-accent text-light py-8 mb-8 rounded-lg shadow-lg">
-          <div className="flex items-center justify-center text-center gap-6">
-            {/* Ícono Heroicon */}
-            <TrophyIcon className="w-12 h-12 text-light" />
+        {/* Banner con CSS personalizado */}
+        <div className="banner">
+          {/* Ícono Heroicon o SVG */}
+          <TrophyIcon className="banner-icon" />
 
-            {/* Texto y botón */}
-            <div className="flex flex-col items-center">
-              <h1 className="text-3xl font-bold mb-2">
-                ¡Bienvenidos a los Torneos FPA!
-              </h1>
-              <p className="text-lg max-w-2xl">
-                Bienvenido a la sección de torneos de la Federación de Pádel
-                Añatuya. Aquí encontrarás los próximos eventos disponibles
-                para jugadores y el acceso para organizadores.
-              </p>
-              <Link
-                to="/crear-torneo"
-                className="mt-4 px-6 py-2 bg-light text-dark font-semibold rounded-md hover:bg-accent hover:text-light transition"
-              >
-                ¿Eres organizador? Crear torneo
-              </Link>
-            </div>
+          {/* Texto y botón */}
+          <div>
+            <h1>¡Bienvenidos a los Torneos FPA!</h1>
+            <p>
+              Bienvenido a la sección de torneos de la Federación de Pádel
+              Añatuya. Aquí encontrarás los próximos eventos disponibles para
+              jugadores y el acceso para organizadores.
+            </p>
+            <Link to="/crear-torneo">¿Eres organizador? Crear torneo</Link>
           </div>
         </div>
 
         {/* Subtítulo */}
-        <h2 className="text-xl font-semibold text-light mb-6">
+        <h2 className="text-xl font-semibold text-light mb-8 mt-8">
           Próximos eventos
         </h2>
 

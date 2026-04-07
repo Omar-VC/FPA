@@ -1,7 +1,12 @@
 :root {
+  :root {
   --color-dark: #2a2a2a;
   --color-green: #408A71;
+  --color-green-light: #56B28C;
+  --color-green-dark: #2F6A55;
   --color-light: #ffffff;
+}
+
 
   --font-main: "Inter", sans-serif;
   --spacing-lg: 2rem;
