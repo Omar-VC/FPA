@@ -1,6 +1,11 @@
 import { useParams } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 import { jugadores } from "../modules/ranking/data";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faRankingStar } from '@fortawesome/free-solid-svg-icons'
+import { ChartBarIcon } from '@heroicons/react/24/solid'
+
+
 
 function obtenerCategoria(puntos: number): string {
   if (puntos >= 1400) return "1ra Categoría";
@@ -25,19 +30,26 @@ export default function RankingPage() {
 
   return (
     <PublicLayout>
-      <div className="flex flex-col items-center py-8">
-        <h1 className="text-2xl font-bold text-accent mb-6">
-          Ranking {generoSeleccionado === "masculino" ? "Masculino" : "Femenino"}
-        </h1>
-
-        <table className="w-3/4 text-left border-collapse">
+      <div className="w-full md:w-3/4 mx-auto py-10 flex flex-col items-center gap-6">
+        <div className="w-full md:w-3/4 mx-auto mb-0 rounded-t-md shadow-md bg-gradient-to-r from-green-200 via-green-400 to-dark">
+          <div className="flex items-center justify-center gap-3 py-4">
+            {/* Icono de trofeo de Heroicons */}
+           <ChartBarIcon className="h-8 w-8 text-dark" />
+            <h1 className="text-3xl font-bold text-dark capitalize tracking-wide text-center py-4">
+              Ranking{" "}
+              {generoSeleccionado === "masculino" ? "Masculino" : "Femenino"}
+            </h1>
+          </div>
+        </div>
+        <div className="w-full h-2 bg-accent/30 rounded-t-md shadow-md"></div>
+        <table className="w-full text-left border-collapse shadow-lg rounded-lg overflow-hidden">
           <thead>
-            <tr className="bg-primary text-light">
-              <th className="px-4 py-2">Posición</th>
-              <th className="px-4 py-2">Jugador</th>
-              <th className="px-4 py-2">Apodo</th>
-              <th className="px-4 py-2">Ciudad</th>
-              <th className="px-4 py-2">Puntos</th>
+            <tr className="bg-dark text-light">
+              <th className="px-4 py-3">Posición</th>
+              <th className="px-4 py-3">Jugador</th>
+              <th className="px-4 py-3">Apodo</th>
+              <th className="px-4 py-3">Ciudad</th>
+              <th className="px-4 py-3">Puntos</th>
             </tr>
           </thead>
           <tbody>
@@ -50,13 +62,28 @@ export default function RankingPage() {
                 <>
                   {mostrarSeparador && (
                     <tr key={`sep-${categoria}`} className="bg-dark">
-                      <td colSpan={5} className="text-center text-primary font-semibold py-2">
-                        —— {categoria} ——
+                      <td
+                        colSpan={5}
+                        className="text-center text-primary font-semibold py-3 uppercase tracking-wider border-t border-b border-accent"
+                      >
+                        ★ {categoria} ★
                       </td>
                     </tr>
                   )}
-                  <tr key={j.nombre} className="border-b border-accent">
-                    <td className="px-4 py-2">{i + 1}</td>
+                  <tr
+                    key={j.nombre}
+                    className={`border-b border-accent transition duration-200
+                        ${i === 0 ? "bg-primary text-light font-bold hover:bg-primary/80" : ""}
+                        ${i === 1 ? "bg-accent text-dark font-semibold hover:bg-accent/80 hover:text-light" : ""}
+                        ${i === 2 ? "bg-light text-dark font-semibold hover:bg-light/80 hover:text-dark" : ""}
+                        ${i > 2 ? "hover:bg-primary/20" : ""}`}
+                  >
+                    <td className="px-4 py-2 flex items-center gap-2">
+                      {i === 0 && <span>🥇</span>}
+                      {i === 1 && <span>🥈</span>}
+                      {i === 2 && <span>🥉</span>}
+                      {i + 1}
+                    </td>
                     <td className="px-4 py-2">{j.nombre}</td>
                     <td className="px-4 py-2">{j.apodo ?? "-"}</td>
                     <td className="px-4 py-2">{j.ciudad}</td>
