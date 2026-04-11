@@ -1,8 +1,6 @@
 import { useParams } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 import { jugadores } from "../modules/ranking/data";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faRankingStar } from '@fortawesome/free-solid-svg-icons'
 import { ChartBarIcon } from '@heroicons/react/24/solid'
 
 
