@@ -1,7 +1,6 @@
 import AppRouter from "./router/AppRouter";
 // App.tsx o index.tsx
 import "./styles/variables.css";
-import "./styles/responsive.css"; // media queries globales
 
 
 function App() {

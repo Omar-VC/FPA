@@ -1,13 +1,15 @@
-/* navbar.css */
-
+/* =========================
+   Navbar base (desktop-first)
+   ========================= */
 .navbar {
-  background-color: var(--color-dark);
-  border-bottom: 3px solid var(--color-green);
-  position: relative;
+  background-color: rgba(9, 20, 19, 0.85);
   z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
 }
 
-/* Logo */
 .logo-img {
   height: 90px;
   width: auto;
@@ -25,13 +27,13 @@
   color: var(--color-light);
 }
 
-/* Links */
 .nav-link {
   color: var(--color-light);
-  font-size: 1.1rem;
+  font-size: 1rem; /* tamaño normal en desktop */
   font-weight: 500;
   position: relative;
   transition: color 0.3s ease;
+  padding: 0.5rem 1rem;
 }
 
 .nav-link:hover {
@@ -53,28 +55,103 @@
   width: 100%;
 }
 
-/* Menú hamburguesa */
+/* Links en desktop: fila horizontal */
 .menu-links {
-  background: linear-gradient(180deg, var(--color-dark), var(--color-green-dark));
-  padding: 2rem 1.5rem;
-}
-
-.menu-links li {
-  margin-bottom: 1.5rem;
-}
-
-/* Logo dentro del menú */
-.menu-logo {
-  margin-top: auto;
-  text-align: center;
-  padding-top: 2rem;
-}
-
-.menu-logo img {
-  height: 170px;
+  position: static;
+  background: transparent;
+  border: 0;
+  backdrop-filter: none;
+  height: auto;
   width: auto;
-  object-fit: contain;
-  margin-top: -100px;
-  filter: drop-shadow(0 0 8px var(--color-green-light));
+  padding: 0;
+  transform: none;
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
 }
 
+.big-link {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.big-link:hover {
+  color: #c5e9c1;
+  text-shadow: 0 0 5px rgba(129, 255, 71, 0.5);
+}
+
+/* Logo dentro del menú hamburguesa no se muestra en desktop */
+.menu-logo {
+  display: none;
+}
+
+/* Overlay (solo mobile) */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 40;
+  transition: opacity 0.3s ease;
+}
+
+/* =========================
+   Mobile / Tablet
+   ========================= */
+@media (max-width: 767px) {
+  .menu-links {
+    background: var(--gradient-mobile-menu);
+    backdrop-filter: blur(6px);
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 75%;
+    z-index: 200;
+    padding: 4rem 1.5rem 2rem;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .big-link {
+    font-size: 1.5rem; /* más grande en mobile */
+    font-weight: 600;
+    margin: 2.5rem 0;
+    padding: 0.6rem 1rem;
+  }
+
+  .menu-logo {
+    display: flex;
+    margin-top: auto;
+    text-align: center;
+    padding-top: 2rem;
+    justify-content: center;
+  }
+
+  .menu-logo img {
+    height: 200px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px var(--color-green-light));
+  }
+}
+
+/* =========================
+   Tablet ajustes
+   ========================= */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .navbar {
+    padding: 0.10rem 1rem;
+  }
+
+  .nav-link {
+    font-size: 13px;
+  }
+
+  .logo-text {
+    display: none;
+  }
+}

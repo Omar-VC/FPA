@@ -2,12 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Importación de tipografía */
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/600.css";
 @import "@fontsource/inter/700.css";
 
 /* Estilos globales */
 body {
-  @apply bg-dark text-light;
-  font-family: 'Inter', sans-serif;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  font-family: var(--font-main);
+  margin: 0;
+  padding: 0;
+}
+
+/* Reset básico para listas y enlaces */
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }

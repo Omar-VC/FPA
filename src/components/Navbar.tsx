@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import Logo from "../assets/Logo.png";
-import "../styles/navbar.css";
-import "../styles/menu.css";
-import "../styles/responsive.css"; // último
+import "../styles/navbar.css"; // ahora todo está centralizado aquí
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -11,11 +9,11 @@ export default function Navbar() {
   const closeMenu = () => setOpen(false);
 
   return (
-    <nav className="navbar flex items-center justify-between px-6 py-3">
+    <nav className="navbar fixed top-0 left-0 w-full z-50 bg-dark text-light">
       {/* Logo + Nombre */}
       <Link to="/" className="flex items-center space-x-3">
         <img src={Logo} alt="Logo" className="logo-img" />
-        <span className="logo-text">FPA</span>
+        <span className="logo-text text-green">FPA</span>
       </Link>
 
       {/* Botón hamburguesa en móvil */}
@@ -31,9 +29,9 @@ export default function Navbar() {
 
       {/* Links */}
       <ul
-        className={`menu-links flex flex-col md:flex-row md:space-x-6 fixed md:static top-0 right-0 h-full md:h-auto w-3/4 md:w-auto transition-transform duration-500 ease-in-out ${
+        className={`menu-links ${
           open ? "translate-x-0" : "translate-x-full md:translate-x-0"
-        }`}
+        } flex flex-col md:flex-row md:space-x-6 md:static md:bg-transparent md:border-0 md:backdrop-filter-none`}
       >
         <li>
           <NavLink
@@ -74,7 +72,7 @@ export default function Navbar() {
 
         {/* Logo al final del menú hamburguesa */}
         <div className="menu-logo">
-          <img src={Logo} alt="Logo" className="logo-img" />
+          <img src={Logo} alt="Logo" />
         </div>
       </ul>
     </nav>
