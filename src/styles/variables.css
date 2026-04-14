@@ -1,14 +1,14 @@
 :root {
-  /* Paleta institucional */
-  --color-dark: #2a2a2a;
-  --color-green: #408A71;
-  --color-green-light: #56B28C;
-  --color-green-dark: #2F6A55;
-  --color-light: #ffffff;
+  /* Paleta institucional (versión vieja) */
+  --color-dark: #091413;       /* fondo oscuro verdoso */
+  --color-green: #408A71;      /* verde medio/acento */
+  --color-green-light: #56B28C;/* verde claro */
+  --color-green-dark: #2F6A55; /* verde profundo */
+  --color-light: #B0E4CC;      /* tono claro verdoso */
 
   /* Gradientes institucionales */
   --gradient-dark-green: linear-gradient(180deg, var(--color-dark), var(--color-green-dark));
-  --gradient-mobile-menu: linear-gradient(135deg, rgba(42,42,42,0.95), rgba(64,138,113,0.85));
+  --gradient-mobile-menu: linear-gradient(135deg, rgba(9,20,19,0.95), rgba(64,138,113,0.85));
 
   /* Tipografía */
   --font-main: "Inter", sans-serif;

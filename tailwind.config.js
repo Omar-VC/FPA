@@ -3,18 +3,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        dark: "#2a2a2a",            // igual que variables.css
-        green: "#408A71",           // institucional
-        "green-light": "#56B28C",   // hover, detalles
-        "green-dark": "#2F6A55",    // gradientes
-        light: "#ffffff",           // texto/fondo claro
+        dark: "var(--color-dark)",
+        green: "var(--color-green)",
+        "green-light": "var(--color-green-light)",
+        "green-dark": "var(--color-green-dark)",
+        light: "var(--color-light)",
       },
       fontFamily: {
-        main: ["Inter", "sans-serif"], // igual que variables.css
+        main: ["var(--font-main)", "sans-serif"],
       },
       spacing: {
-        md: "1rem",
-        lg: "2rem",
+        md: "var(--spacing-md)",
+        lg: "var(--spacing-lg)",
       },
     },
   },

@@ -9,9 +9,7 @@
 
 /* Estilos globales */
 body {
-  background-color: var(--color-dark);
-  color: var(--color-light);
-  font-family: var(--font-main);
+  @apply bg-dark text-light font-main;
   margin: 0;
   padding: 0;
 }

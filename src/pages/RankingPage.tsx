@@ -3,8 +3,6 @@ import PublicLayout from "../layouts/PublicLayout";
 import { jugadores } from "../modules/ranking/data";
 import { ChartBarIcon } from '@heroicons/react/24/solid'
 
-
-
 function obtenerCategoria(puntos: number): string {
   if (puntos >= 1400) return "1ra Categoría";
   if (puntos >= 1200) return "2da Categoría";
@@ -29,17 +27,20 @@ export default function RankingPage() {
   return (
     <PublicLayout>
       <div className="w-full md:w-3/4 mx-auto py-10 flex flex-col items-center gap-6">
-        <div className="w-full md:w-3/4 mx-auto mb-0 rounded-t-md shadow-md bg-gradient-to-r from-green-200 via-green-400 to-dark">
+        {/* Header con gradiente institucional */}
+        <div className="w-full md:w-3/4 mx-auto mb-0 rounded-t-md shadow-md bg-gradient-to-r from-green-light via-green to-dark">
           <div className="flex items-center justify-center gap-3 py-4">
-            {/* Icono de trofeo de Heroicons */}
-           <ChartBarIcon className="h-8 w-8 text-dark" />
-            <h1 className="text-3xl font-bold text-dark capitalize tracking-wide text-center py-4">
-              Ranking{" "}
-              {generoSeleccionado === "masculino" ? "Masculino" : "Femenino"}
+            <ChartBarIcon className="h-8 w-8 text-light" />
+            <h1 className="text-3xl font-bold text-light capitalize tracking-wide text-center py-4">
+              Ranking {generoSeleccionado === "masculino" ? "Masculino" : "Femenino"}
             </h1>
           </div>
         </div>
+
+        {/* Separador institucional */}
         <div className="w-full h-2 bg-accent/30 rounded-t-md shadow-md"></div>
+
+        {/* Tabla de ranking */}
         <table className="w-full text-left border-collapse shadow-lg rounded-lg overflow-hidden">
           <thead>
             <tr className="bg-dark text-light">
