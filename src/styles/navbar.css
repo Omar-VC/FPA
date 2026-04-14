@@ -1,157 +1,136 @@
 /* =========================
-   Navbar base (desktop-first)
+   Navbar base
    ========================= */
 .navbar {
-  background-color: rgba(9, 20, 19, 0.85);
-  z-index: 100;
+  background: rgba(11, 26, 24, 0.75);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-border);
+
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1.5rem;
 }
 
+/* Logo */
 .logo-img {
-  height: 90px;
-  width: auto;
-  object-fit: contain;
-  transition: filter 0.3s ease;
-}
-
-.logo-img:hover {
-  filter: drop-shadow(0 0 12px var(--color-green));
+  height: 65px;
 }
 
 .logo-text {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: var(--color-light);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-primary);
 }
 
+/* =========================
+   LINKS
+   ========================= */
 .nav-link {
-  color: var(--color-light);
-  font-size: 1rem; /* tamaño normal en desktop */
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
   font-weight: 500;
   position: relative;
-  transition: color 0.3s ease;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.8rem;
+  transition: all 0.25s ease;
 }
 
 .nav-link:hover {
-  color: var(--color-green-light);
+  color: var(--color-primary);
 }
 
+.nav-link.active {
+  color: var(--color-text);
+}
+
+/* Línea */
 .nav-link::after {
   content: "";
   position: absolute;
-  bottom: -4px;
+  bottom: -5px;
   left: 0;
   width: 0%;
   height: 2px;
-  background-color: var(--color-green);
-  transition: width 0.3s ease;
+  background: var(--color-primary);
+  transition: width 0.25s ease;
 }
 
 .nav-link:hover::after {
   width: 100%;
 }
 
-/* Links en desktop: fila horizontal */
-.menu-links {
-  position: static;
-  background: transparent;
-  border: 0;
-  backdrop-filter: none;
-  height: auto;
-  width: auto;
-  padding: 0;
-  transform: none;
+/* CTA */
+.nav-cta {
+  background: var(--color-accent);
+  color: #000;
+  border-radius: 8px;
+  padding: 0.4rem 0.9rem;
+  font-weight: 600;
+}
+
+.nav-cta:hover {
+  background: var(--color-accent-hover);
+}
+
+/* =========================
+   DESKTOP MENU
+   ========================= */
+.menu-desktop {
   display: flex;
-  flex-direction: row;
   gap: 1.5rem;
 }
 
-.big-link {
-  font-size: 1rem;
-  font-weight: 500;
-  margin: 0;
-  padding: 0.5rem 1rem;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
+/* =========================
+   MOBILE SIDEBAR
+   ========================= */
+.menu-mobile {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  height: 100%;
+  width: 75%;
+
+  background: rgba(11, 26, 24, 0.98);
+  backdrop-filter: blur(12px);
+
+  display: flex;
+  flex-direction: column;
+  padding: 4rem 1.5rem;
+
+  transition: right 0.4s ease;
+  z-index: 200;
 }
 
-.big-link:hover {
-  color: #c5e9c1;
-  text-shadow: 0 0 5px rgba(129, 255, 71, 0.5);
+.menu-mobile.open {
+  right: 0;
 }
 
-/* Logo dentro del menú hamburguesa no se muestra en desktop */
+.menu-mobile ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.menu-mobile .nav-link {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* Logo abajo */
 .menu-logo {
-  display: none;
+  margin-top: auto;
+  text-align: center;
 }
 
-/* Overlay (solo mobile) */
+.menu-logo img {
+  height: 140px;
+  opacity: 0.7;
+}
+
+/* Overlay */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 40;
-  transition: opacity 0.3s ease;
-}
-
-/* =========================
-   Mobile / Tablet
-   ========================= */
-@media (max-width: 767px) {
-  .menu-links {
-    background: var(--gradient-mobile-menu);
-    backdrop-filter: blur(6px);
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 75%;
-    z-index: 200;
-    padding: 4rem 1.5rem 2rem;
-    flex-direction: column;
-    gap: 1.5rem;
-    transition: transform 0.5s ease-in-out;
-  }
-
-  .big-link {
-    font-size: 1.5rem; /* más grande en mobile */
-    font-weight: 600;
-    margin: 2.5rem 0;
-    padding: 0.6rem 1rem;
-  }
-
-  .menu-logo {
-    display: flex;
-    margin-top: auto;
-    text-align: center;
-    padding-top: 2rem;
-    justify-content: center;
-  }
-
-  .menu-logo img {
-    height: 200px;
-    width: auto;
-    object-fit: contain;
-    filter: drop-shadow(0 0 8px var(--color-green-light));
-  }
-}
-
-/* =========================
-   Tablet ajustes
-   ========================= */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .navbar {
-    padding: 0.10rem 1rem;
-  }
-
-  .nav-link {
-    font-size: 13px;
-  }
-
-  .logo-text {
-    display: none;
-  }
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 150;
 }

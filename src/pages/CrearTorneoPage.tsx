@@ -21,12 +21,7 @@ export default function CrearTorneoPage() {
   const [parejas, setParejas] = useState<{ dni1: string; dni2: string }[]>([]);
 
   const handleValidarCodigo = () => {
-    if (validarLlave(codigo)) {
-      setHabilitado(true);
-      alert("Código válido. Ya puedes crear tu torneo.");
-    } else {
-      alert("Código inválido.");
-    }
+    if (validarLlave(codigo)) setHabilitado(true);
   };
 
   const handleAgregarPareja = () => {
@@ -38,6 +33,7 @@ export default function CrearTorneoPage() {
 
   const handleCrearTorneo = () => {
     const torneo = crearTorneo(codigo, nombre, fecha, lugar);
+
     if (torneo) {
       torneo.puntos = {
         campeon: puntosCampeon,
@@ -45,10 +41,11 @@ export default function CrearTorneoPage() {
         semifinal: puntosSemifinal,
         cuartos: puntosCuartos,
       };
+
       torneo.parejas = parejas;
+
       torneos.push(torneo);
-      alert(`Torneo creado: ${torneo.nombre}`);
-      // limpiar inputs
+
       setNombre("");
       setFecha("");
       setLugar("");
@@ -60,125 +57,141 @@ export default function CrearTorneoPage() {
 
   return (
     <PublicLayout>
-      <div className="flex flex-col items-center py-8">
-        <h1 className="text-2xl font-bold text-accent mb-6">Crear Torneo</h1>
+      <div className="w-full max-w-3xl mx-auto flex flex-col gap-6">
 
-        {/* Validación de código */}
-        <div className="mb-6 flex gap-2">
-          <input
-            type="text"
-            placeholder="Ingrese código de organizador"
-            value={codigo}
-            onChange={(e) => setCodigo(e.target.value)}
-            className="p-2 rounded-md"
-          />
-          <button
-            onClick={handleValidarCodigo}
-            className="px-4 py-2 bg-primary text-light rounded-md hover:bg-accent"
-          >
-            Validar
-          </button>
+        {/* HEADER */}
+        <div
+          className="rounded-xl p-5"
+          style={{
+            background: "var(--gradient-main)",
+            border: "1px solid var(--color-border)",
+          }}
+        >
+          <h1 className="text-2xl font-bold">Crear Torneo</h1>
+          <p className="text-sm opacity-70">
+            Panel de organización federativa
+          </p>
         </div>
 
-        {/* Formulario de creación */}
+        {/* STEP 1 */}
+        <div className="card">
+          <h3 className="card-title">1. Código organizador</h3>
+
+          <div className="flex gap-2">
+            <input
+              value={codigo}
+              onChange={(e) => setCodigo(e.target.value)}
+              className="flex-1 px-3 py-2 rounded-md bg-transparent border"
+              style={{ borderColor: "var(--color-border)" }}
+              placeholder="Ingresar código"
+            />
+
+            <button
+              onClick={handleValidarCodigo}
+              className="px-4 py-2 rounded-md font-semibold"
+              style={{
+                background: "var(--color-primary)",
+                color: "#000",
+              }}
+            >
+              Validar
+            </button>
+          </div>
+        </div>
+
+        {/* STEP 2 */}
         {habilitado && (
-          <div className="mt-6 w-3/4 bg-dark border border-accent rounded-lg p-4">
-            <h2 className="text-light font-semibold mb-2">Nuevo torneo</h2>
-            <div className="flex flex-col gap-2">
-              <input
-                type="text"
-                placeholder="Nombre del torneo"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                className="p-2 rounded-md"
-              />
-              <input
-                type="date"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
-                className="p-2 rounded-md"
-              />
-              <input
-                type="text"
-                placeholder="Lugar"
-                value={lugar}
-                onChange={(e) => setLugar(e.target.value)}
-                className="p-2 rounded-md"
-              />
+          <>
+            <div className="card">
+              <h3 className="card-title">2. Datos del torneo</h3>
 
-              {/* Puntos */}
-              <h3 className="text-light mt-4">Asignar puntos</h3>
-              <input
-                type="number"
-                placeholder="Campeón"
-                value={puntosCampeon}
-                onChange={(e) => setPuntosCampeon(Number(e.target.value))}
-                className="p-2 rounded-md"
-              />
-              <input
-                type="number"
-                placeholder="Finalista"
-                value={puntosFinalista}
-                onChange={(e) => setPuntosFinalista(Number(e.target.value))}
-                className="p-2 rounded-md"
-              />
-              <input
-                type="number"
-                placeholder="Semifinal"
-                value={puntosSemifinal}
-                onChange={(e) => setPuntosSemifinal(Number(e.target.value))}
-                className="p-2 rounded-md"
-              />
-              <input
-                type="number"
-                placeholder="Cuartos"
-                value={puntosCuartos}
-                onChange={(e) => setPuntosCuartos(Number(e.target.value))}
-                className="p-2 rounded-md"
-              />
+              <div className="flex flex-col gap-3">
+                <input
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  placeholder="Nombre del torneo"
+                  className="input"
+                />
 
-              {/* Jugadores */}
-              <h3 className="text-light mt-4">Agregar jugadores (por DNI)</h3>
+                <input
+                  type="date"
+                  value={fecha}
+                  onChange={(e) => setFecha(e.target.value)}
+                  className="input"
+                />
+
+                <input
+                  value={lugar}
+                  onChange={(e) => setLugar(e.target.value)}
+                  placeholder="Lugar"
+                  className="input"
+                />
+              </div>
+            </div>
+
+            {/* STEP 3 */}
+            <div className="card">
+              <h3 className="card-title">3. Puntos</h3>
+
+              <div className="grid grid-cols-2 gap-2">
+                <input className="input" type="number" value={puntosCampeon} onChange={(e) => setPuntosCampeon(Number(e.target.value))} placeholder="Campeón" />
+                <input className="input" type="number" value={puntosFinalista} onChange={(e) => setPuntosFinalista(Number(e.target.value))} placeholder="Finalista" />
+                <input className="input" type="number" value={puntosSemifinal} onChange={(e) => setPuntosSemifinal(Number(e.target.value))} placeholder="Semifinal" />
+                <input className="input" type="number" value={puntosCuartos} onChange={(e) => setPuntosCuartos(Number(e.target.value))} placeholder="Cuartos" />
+              </div>
+            </div>
+
+            {/* STEP 4 */}
+            <div className="card">
+              <h3 className="card-title">4. Parejas</h3>
+
               <div className="flex gap-2">
                 <input
-                  type="text"
-                  placeholder="DNI Jugador 1"
                   value={dni1}
                   onChange={(e) => setDni1(e.target.value)}
-                  className="p-2 rounded-md"
+                  placeholder="DNI 1"
+                  className="input"
                 />
                 <input
-                  type="text"
-                  placeholder="DNI Jugador 2"
                   value={dni2}
                   onChange={(e) => setDni2(e.target.value)}
-                  className="p-2 rounded-md"
+                  placeholder="DNI 2"
+                  className="input"
                 />
+
                 <button
                   onClick={handleAgregarPareja}
-                  className="px-4 py-2 bg-secondary text-light rounded-md hover:bg-accent"
+                  className="px-3 py-2 rounded-md font-semibold"
+                  style={{
+                    background: "var(--color-accent)",
+                    color: "#000",
+                  }}
                 >
-                  Agregar pareja
+                  +
                 </button>
               </div>
 
-              {/* Lista de parejas */}
-              <ul className="text-light mt-2">
+              <div className="mt-3 flex flex-col gap-1 text-sm opacity-80">
                 {parejas.map((p, i) => (
-                  <li key={i}>
+                  <div key={i}>
                     {p.dni1} & {p.dni2}
-                  </li>
+                  </div>
                 ))}
-              </ul>
-
-              <button
-                onClick={handleCrearTorneo}
-                className="mt-4 px-4 py-2 bg-primary text-light rounded-md hover:bg-accent"
-              >
-                Confirmar creación
-              </button>
+              </div>
             </div>
-          </div>
+
+            {/* CTA */}
+            <button
+              onClick={handleCrearTorneo}
+              className="py-3 rounded-lg font-semibold"
+              style={{
+                background: "var(--color-primary)",
+                color: "#000",
+              }}
+            >
+              Crear torneo
+            </button>
+          </>
         )}
       </div>
     </PublicLayout>

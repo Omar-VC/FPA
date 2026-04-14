@@ -1,4 +1,4 @@
-import type { Torneo, Pareja } from "./torneo.types";
+import type { Torneo } from "./torneo.types";
 
 const llavesValidas = ["A2431S", "B9821X"];
 
@@ -37,8 +37,8 @@ export function crearTorneo(
   };
 }
 
-export function generarZonas(parejas: Pareja[]) {
-  const zonas: { nombre: string; parejas: Pareja[] }[] = [];
+export function generarZonas(parejas: Torneo["parejas"]) {
+  const zonas: { nombre: string; parejas: Torneo["parejas"] }[] = [];
 
   const cantidadZonas = 4;
   const porZona = 5;

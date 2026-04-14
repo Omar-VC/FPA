@@ -1,19 +1,40 @@
 :root {
-  /* Paleta institucional (versión vieja) */
-  --color-dark: #091413;       /* fondo oscuro verdoso */
-  --color-green: #408A71;      /* verde medio/acento */
-  --color-green-light: #56B28C;/* verde claro */
-  --color-green-dark: #2F6A55; /* verde profundo */
-  --color-light: #B0E4CC;      /* tono claro verdoso */
+  /* 🎯 Base */
+  --color-bg: #0B1A18;
+  --color-surface: #122623;
+  --color-surface-2: #18332F;
 
-  /* Gradientes institucionales */
-  --gradient-dark-green: linear-gradient(180deg, var(--color-dark), var(--color-green-dark));
-  --gradient-mobile-menu: linear-gradient(135deg, rgba(9,20,19,0.95), rgba(64,138,113,0.85));
+  /* 🎯 Primario (marca) */
+  --color-primary: #3FAF85;
+  --color-primary-hover: #36A178;
 
-  /* Tipografía */
+  /* 🎯 Secundario (para contraste) */
+  --color-accent: #F4A261; /* rompe el verde, clave */
+  --color-accent-hover: #E8954E;
+
+  /* 🎯 Texto */
+  --color-text: #E6F4EE;
+  --color-text-muted: #9FB7AE;
+
+  /* 🎯 Estados */
+  --color-success: #4CAF50;
+  --color-error: #E63946;
+  --color-warning: #F4A261;
+
+  /* 🎯 Bordes */
+  --color-border: #24443F;
+
+  /* 🎯 Gradientes */
+  --gradient-main: linear-gradient(180deg, #0B1A18, #18332F);
+
+  /* 🎯 Tipografía */
   --font-main: "Inter", sans-serif;
 
-  /* Espaciados */
-  --spacing-lg: 2rem;
+  /* 🎯 Espaciado */
+  --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+
+  /* 🎯 Sombras */
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.2);
 }

@@ -2,19 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Importación de tipografía */
+/* Tipografía */
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/600.css";
 @import "@fontsource/inter/700.css";
 
-/* Estilos globales */
+/* Base */
 body {
-  @apply bg-dark text-light font-main;
+  @apply font-main;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   margin: 0;
   padding: 0;
 }
 
-/* Reset básico para listas y enlaces */
+/* Scroll más limpio */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Reset */
 ul {
   list-style: none;
   margin: 0;
@@ -24,4 +31,34 @@ ul {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* Mejoras visuales básicas */
+button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input, select, textarea {
+  outline: none;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.input {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text);
 }
