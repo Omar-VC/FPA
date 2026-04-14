@@ -53,18 +53,25 @@ export default function Navbar() {
 
       {/* MENU MOBILE (sidebar real) */}
       <div
-        className={`menu-mobile ${
-          open ? "open" : ""
-        } md:hidden`}
+        className={`menu-mobile ${open ? "open" : ""} md:hidden`}
+        onClick={closeMenu}
       >
-        <ul>
+        <ul onClick={(e) => e.stopPropagation()}>
           <li>
-            <NavLink to="/ranking/masculino" className="nav-link" onClick={closeMenu}>
+            <NavLink
+              to="/ranking/masculino"
+              className="nav-link"
+              onClick={closeMenu}
+            >
               Ranking Masculino
             </NavLink>
           </li>
           <li>
-            <NavLink to="/ranking/femenino" className="nav-link" onClick={closeMenu}>
+            <NavLink
+              to="/ranking/femenino"
+              className="nav-link"
+              onClick={closeMenu}
+            >
               Ranking Femenino
             </NavLink>
           </li>
@@ -74,12 +81,15 @@ export default function Navbar() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/inscribirse" className="nav-link nav-cta" onClick={closeMenu}>
+            <NavLink
+              to="/inscribirse"
+              className="nav-link nav-cta"
+              onClick={closeMenu}
+            >
               Inscripción
             </NavLink>
           </li>
         </ul>
-
         <div className="menu-logo">
           <img src={Logo} alt="Logo" />
         </div>
