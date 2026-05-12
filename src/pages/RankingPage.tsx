@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
-import { jugadores } from "../modules/ranking/data";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
+import { getPlayers } from "../services/api";
 
 function obtenerCategoria(puntos: number): string {
   if (puntos >= 1400) return "1ra Categoría";
@@ -18,11 +18,11 @@ export default function RankingPage() {
   const { gender } = useParams<{ gender: "masculino" | "femenino" }>();
   const generoSeleccionado = gender ?? "masculino";
 
-  const filtrados = jugadores
+  const jugadores = getPlayers();
+
+  const filtrados = [...jugadores] // evitar mutación global
     .filter((j) => j.genero === generoSeleccionado)
     .sort((a, b) => b.puntos - a.puntos);
-
-  let categoriaActual = "";
 
   return (
     <PublicLayout>
@@ -42,15 +42,17 @@ export default function RankingPage() {
           </h1>
         </div>
 
-        {/* LISTA DE RANKING */}
+        {/* LISTA */}
         <div className="flex flex-col gap-3">
           {filtrados.map((j, i) => {
             const categoria = obtenerCategoria(j.puntos);
-            const mostrarSeparador = categoria !== categoriaActual;
-            categoriaActual = categoria;
+            const categoriaAnterior =
+              i > 0 ? obtenerCategoria(filtrados[i - 1].puntos) : null;
+
+            const mostrarSeparador = categoria !== categoriaAnterior;
 
             return (
-              <div key={j.nombre}>
+              <div key={j.id}>
                 {/* SEPARADOR */}
                 {mostrarSeparador && (
                   <div
@@ -65,7 +67,7 @@ export default function RankingPage() {
                   </div>
                 )}
 
-                {/* CARD JUGADOR */}
+                {/* CARD */}
                 <div
                   className="flex items-center justify-between px-4 py-3 rounded-xl transition hover:scale-[1.01]"
                   style={{
@@ -79,7 +81,7 @@ export default function RankingPage() {
                     border: "1px solid var(--color-border)",
                   }}
                 >
-                  {/* IZQUIERDA */}
+                  {/* IZQ */}
                   <div className="flex items-center gap-3">
                     <div className="font-bold text-lg flex items-center gap-1">
                       {i === 0 && "🥇"}
@@ -96,7 +98,7 @@ export default function RankingPage() {
                     </div>
                   </div>
 
-                  {/* DERECHA */}
+                  {/* DER */}
                   <div className="text-right">
                     <div className="text-lg font-bold">{j.puntos}</div>
                     <div className="text-xs opacity-70">pts</div>

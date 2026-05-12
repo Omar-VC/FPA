@@ -1,10 +1,12 @@
 import { useParams } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
-import { torneos } from "../modules/torneos/data";
-import { jugadoresFederados } from "../modules/jugadores/data";
-import { generarZonas } from "../modules/torneos/utils";
+import { getTournaments, getPlayers } from "../services/api";
+import { generarZonas } from "../modules/torneos/torneo.utils";
 
 export default function TorneoDetailPage() {
+  const torneos = getTournaments();
+  const jugadoresFederados = getPlayers();
+
   const { id } = useParams<{ id: string }>();
   const torneo = torneos.find((t) => t.id === id);
 
@@ -12,7 +14,10 @@ export default function TorneoDetailPage() {
     return (
       <PublicLayout>
         <div className="text-center py-10">
-          <h1 className="text-xl font-bold" style={{ color: "var(--color-accent)" }}>
+          <h1
+            className="text-xl font-bold"
+            style={{ color: "var(--color-accent)" }}
+          >
             Torneo no encontrado
           </h1>
         </div>
@@ -27,8 +32,8 @@ export default function TorneoDetailPage() {
 
   const rankingParcial = torneo.parejas
     .flatMap((p) => [buscarJugador(p.dni1), buscarJugador(p.dni2)])
-    .filter(Boolean)
-    .sort((a, b) => (b?.puntos ?? 0) - (a?.puntos ?? 0));
+    .filter((j): j is NonNullable<typeof j> => Boolean(j))
+    .sort((a, b) => b.puntos - a.puntos);
 
   return (
     <PublicLayout>
@@ -86,7 +91,7 @@ export default function TorneoDetailPage() {
             <div className="flex flex-col gap-2">
               {rankingParcial.map((j, i) => (
                 <div
-                  key={j?.dni}
+                  key={j.dni} // 🔥 CORREGIDO
                   className="flex justify-between px-3 py-2 rounded-md"
                   style={{
                     background:
@@ -98,8 +103,10 @@ export default function TorneoDetailPage() {
                     color: i <= 1 ? "#000" : "var(--color-text)",
                   }}
                 >
-                  <span>#{i + 1} {j?.nombre}</span>
-                  <span>{j?.puntos} pts</span>
+                  <span>
+                    #{i + 1} {j.nombre}
+                  </span>
+                  <span>{j.puntos} pts</span>
                 </div>
               ))}
             </div>

@@ -20,8 +20,8 @@ export interface Torneo {
 
   estado: EstadoTorneo;
 
-  categoria: string;
-  cupoMaximo: number;
+  categoria: "iniciado" | "intermedio" | "avanzado";
+  cupoMaximo: 16;
   inscriptos: number;
 
   parejas: Pareja[];

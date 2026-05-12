@@ -1,7 +1,9 @@
 import { useState } from "react";
 import PublicLayout from "../layouts/PublicLayout";
-import { torneos } from "../modules/torneos/data";
-import { validarLlave, crearTorneo } from "../modules/torneos/utils";
+import { createTournamentService } from "../modules/torneos/torneo.service";
+import { validateOrganizerCode } from "../modules/torneos/rules";
+import { validatePair } from "../modules/torneos/rules";
+import { getPlayerNameByDni } from "../modules/jugadores/jugador.utils";
 
 export default function CrearTorneoPage() {
   const [codigo, setCodigo] = useState("");
@@ -10,6 +12,9 @@ export default function CrearTorneoPage() {
   const [nombre, setNombre] = useState("");
   const [fecha, setFecha] = useState("");
   const [lugar, setLugar] = useState("");
+  const [categoria, setCategoria] = useState<
+    "iniciado" | "intermedio" | "avanzado"
+  >("intermedio");
 
   const [puntosCampeon, setPuntosCampeon] = useState(200);
   const [puntosFinalista, setPuntosFinalista] = useState(150);
@@ -20,46 +25,70 @@ export default function CrearTorneoPage() {
   const [dni2, setDni2] = useState("");
   const [parejas, setParejas] = useState<{ dni1: string; dni2: string }[]>([]);
 
+  // TEMPORAL (después lo movemos a service)
   const handleValidarCodigo = () => {
-    if (validarLlave(codigo)) setHabilitado(true);
+    if (validateOrganizerCode(codigo)) {
+      setHabilitado(true);
+    } else {
+      alert("Código inválido");
+    }
   };
 
   const handleAgregarPareja = () => {
     if (!dni1 || !dni2) return;
+
+    const torneoTemporal = {
+      parejas,
+      categoria,
+    };
+
+    const validation = validatePair(torneoTemporal as any, dni1, dni2);
+
+    if (!validation.valid) {
+      alert(validation.reason);
+      return;
+    }
+
     setParejas([...parejas, { dni1, dni2 }]);
+
     setDni1("");
     setDni2("");
   };
 
   const handleCrearTorneo = () => {
-    const torneo = crearTorneo(codigo, nombre, fecha, lugar);
+    if (!nombre || !fecha || !lugar) {
+      alert("Completá todos los datos");
+      return;
+    }
 
-    if (torneo) {
-      torneo.puntos = {
+    createTournamentService({
+      codigo,
+      nombre,
+      fecha,
+      lugar,
+      categoria,
+      puntos: {
         campeon: puntosCampeon,
         finalista: puntosFinalista,
         semifinal: puntosSemifinal,
         cuartos: puntosCuartos,
-      };
+      },
+      parejas,
+    });
 
-      torneo.parejas = parejas;
+    alert("Torneo creado");
 
-      torneos.push(torneo);
-
-      setNombre("");
-      setFecha("");
-      setLugar("");
-      setParejas([]);
-      setCodigo("");
-      setHabilitado(false);
-    }
+    setNombre("");
+    setFecha("");
+    setLugar("");
+    setParejas([]);
+    setCodigo("");
+    setHabilitado(false);
   };
 
   return (
     <PublicLayout>
       <div className="w-full max-w-3xl mx-auto flex flex-col gap-6">
-
-        {/* HEADER */}
         <div
           className="rounded-xl p-5"
           style={{
@@ -68,9 +97,7 @@ export default function CrearTorneoPage() {
           }}
         >
           <h1 className="text-2xl font-bold">Crear Torneo</h1>
-          <p className="text-sm opacity-70">
-            Panel de organización federativa
-          </p>
+          <p className="text-sm opacity-70">Panel de organización federativa</p>
         </div>
 
         {/* STEP 1 */}
@@ -112,20 +139,33 @@ export default function CrearTorneoPage() {
                   placeholder="Nombre del torneo"
                   className="input"
                 />
-
                 <input
                   type="date"
                   value={fecha}
                   onChange={(e) => setFecha(e.target.value)}
                   className="input"
                 />
-
                 <input
                   value={lugar}
                   onChange={(e) => setLugar(e.target.value)}
                   placeholder="Lugar"
                   className="input"
                 />
+                <select
+                  value={categoria}
+                  onChange={(e) =>
+                    setCategoria(
+                      e.target.value as "iniciado" | "intermedio" | "avanzado",
+                    )
+                  }
+                  className="input"
+                >
+                  <option value="iniciado">Iniciado</option>
+
+                  <option value="intermedio">Intermedio</option>
+
+                  <option value="avanzado">Avanzado</option>
+                </select>
               </div>
             </div>
 
@@ -134,10 +174,30 @@ export default function CrearTorneoPage() {
               <h3 className="card-title">3. Puntos</h3>
 
               <div className="grid grid-cols-2 gap-2">
-                <input className="input" type="number" value={puntosCampeon} onChange={(e) => setPuntosCampeon(Number(e.target.value))} placeholder="Campeón" />
-                <input className="input" type="number" value={puntosFinalista} onChange={(e) => setPuntosFinalista(Number(e.target.value))} placeholder="Finalista" />
-                <input className="input" type="number" value={puntosSemifinal} onChange={(e) => setPuntosSemifinal(Number(e.target.value))} placeholder="Semifinal" />
-                <input className="input" type="number" value={puntosCuartos} onChange={(e) => setPuntosCuartos(Number(e.target.value))} placeholder="Cuartos" />
+                <input
+                  className="input"
+                  type="number"
+                  value={puntosCampeon}
+                  onChange={(e) => setPuntosCampeon(Number(e.target.value))}
+                />
+                <input
+                  className="input"
+                  type="number"
+                  value={puntosFinalista}
+                  onChange={(e) => setPuntosFinalista(Number(e.target.value))}
+                />
+                <input
+                  className="input"
+                  type="number"
+                  value={puntosSemifinal}
+                  onChange={(e) => setPuntosSemifinal(Number(e.target.value))}
+                />
+                <input
+                  className="input"
+                  type="number"
+                  value={puntosCuartos}
+                  onChange={(e) => setPuntosCuartos(Number(e.target.value))}
+                />
               </div>
             </div>
 
@@ -174,13 +234,12 @@ export default function CrearTorneoPage() {
               <div className="mt-3 flex flex-col gap-1 text-sm opacity-80">
                 {parejas.map((p, i) => (
                   <div key={i}>
-                    {p.dni1} & {p.dni2}
+                    {getPlayerNameByDni(p.dni1)} & {getPlayerNameByDni(p.dni2)}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* CTA */}
             <button
               onClick={handleCrearTorneo}
               className="py-3 rounded-lg font-semibold"
