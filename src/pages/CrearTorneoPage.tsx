@@ -15,6 +15,9 @@ export default function CrearTorneoPage() {
   const [categoria, setCategoria] = useState<
     "iniciado" | "intermedio" | "avanzado"
   >("intermedio");
+  const [genero, setGenero] = useState<"masculino" | "femenino" | "mixto">(
+    "masculino",
+  );
 
   const [puntosCampeon, setPuntosCampeon] = useState(200);
   const [puntosFinalista, setPuntosFinalista] = useState(150);
@@ -40,8 +43,8 @@ export default function CrearTorneoPage() {
     const torneoTemporal = {
       parejas,
       categoria,
+      genero,
     };
-
     const validation = validatePair(torneoTemporal as any, dni1, dni2);
 
     if (!validation.valid) {
@@ -67,6 +70,7 @@ export default function CrearTorneoPage() {
       fecha,
       lugar,
       categoria,
+      genero,
       puntos: {
         campeon: puntosCampeon,
         finalista: puntosFinalista,
@@ -165,6 +169,21 @@ export default function CrearTorneoPage() {
                   <option value="intermedio">Intermedio</option>
 
                   <option value="avanzado">Avanzado</option>
+                </select>
+                <select
+                  value={genero}
+                  onChange={(e) =>
+                    setGenero(
+                      e.target.value as "masculino" | "femenino" | "mixto",
+                    )
+                  }
+                  className="input"
+                >
+                  <option value="masculino">Masculino</option>
+
+                  <option value="femenino">Femenino</option>
+
+                  <option value="mixto">Mixto</option>
                 </select>
               </div>
             </div>

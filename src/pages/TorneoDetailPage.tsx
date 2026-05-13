@@ -1,14 +1,28 @@
 import { useParams } from "react-router-dom";
+
 import PublicLayout from "../layouts/PublicLayout";
-import { getTournaments, getPlayers } from "../services/api";
+
+import {
+  getTournaments,
+  getPlayers,
+  removePairFromTournament,
+} from "../services/api";
+
 import { generarZonas } from "../modules/torneos/torneo.utils";
 
 export default function TorneoDetailPage() {
   const torneos = getTournaments();
-  const jugadoresFederados = getPlayers();
 
-  const { id } = useParams<{ id: string }>();
-  const torneo = torneos.find((t) => t.id === id);
+  const jugadoresFederados =
+    getPlayers();
+
+  const { id } = useParams<{
+    id: string;
+  }>();
+
+  const torneo = torneos.find(
+    (t) => t.id === id
+  );
 
   if (!torneo) {
     return (
@@ -16,7 +30,9 @@ export default function TorneoDetailPage() {
         <div className="text-center py-10">
           <h1
             className="text-xl font-bold"
-            style={{ color: "var(--color-accent)" }}
+            style={{
+              color: "var(--color-accent)",
+            }}
           >
             Torneo no encontrado
           </h1>
@@ -25,15 +41,32 @@ export default function TorneoDetailPage() {
     );
   }
 
-  const zonas = generarZonas(torneo.parejas);
+  const zonas = generarZonas(
+    torneo.parejas
+  );
 
-  const buscarJugador = (dni: string) =>
-    jugadoresFederados.find((j) => j.dni === dni);
+  const buscarJugador = (
+    dni: string
+  ) =>
+    jugadoresFederados.find(
+      (j) => j.dni === dni
+    );
 
-  const rankingParcial = torneo.parejas
-    .flatMap((p) => [buscarJugador(p.dni1), buscarJugador(p.dni2)])
-    .filter((j): j is NonNullable<typeof j> => Boolean(j))
-    .sort((a, b) => b.puntos - a.puntos);
+  const rankingParcial =
+    torneo.parejas
+      .flatMap((p) => [
+        buscarJugador(p.dni1),
+        buscarJugador(p.dni2),
+      ])
+      .filter(
+        (
+          j
+        ): j is NonNullable<typeof j> =>
+          Boolean(j)
+      )
+      .sort(
+        (a, b) => b.puntos - a.puntos
+      );
 
   return (
     <PublicLayout>
@@ -43,134 +76,285 @@ export default function TorneoDetailPage() {
         <div
           className="rounded-xl p-6"
           style={{
-            background: "var(--gradient-main)",
-            border: "1px solid var(--color-border)",
+            background:
+              "var(--gradient-main)",
+
+            border:
+              "1px solid var(--color-border)",
           }}
         >
-          <h1 className="text-2xl font-bold mb-2">{torneo.nombre}</h1>
+          <h1 className="text-2xl font-bold mb-2">
+            {torneo.nombre}
+          </h1>
+
           <p className="text-sm opacity-70">
-            {torneo.fecha} • {torneo.lugar}
+            {torneo.fecha} •{" "}
+            {torneo.lugar}
           </p>
 
-          <span
-            className="inline-block mt-3 px-3 py-1 text-xs rounded"
-            style={{
-              background:
-                torneo.estado === "abierto"
-                  ? "var(--color-primary)"
-                  : torneo.estado === "en juego"
-                  ? "var(--color-accent)"
-                  : "var(--color-border)",
-              color: torneo.estado === "finalizado" ? "#fff" : "#000",
-            }}
-          >
-            {torneo.estado.toUpperCase()}
-          </span>
+          <div className="flex gap-2 mt-3">
+
+            <span
+              className="inline-block px-3 py-1 text-xs rounded"
+              style={{
+                background:
+                  torneo.estado === "abierto"
+                    ? "var(--color-primary)"
+                    : torneo.estado ===
+                      "en juego"
+                    ? "var(--color-accent)"
+                    : "var(--color-border)",
+
+                color:
+                  torneo.estado ===
+                  "finalizado"
+                    ? "#fff"
+                    : "#000",
+              }}
+            >
+              {torneo.estado.toUpperCase()}
+            </span>
+
+            <span
+              className="inline-block px-3 py-1 text-xs rounded"
+              style={{
+                background:
+                  "var(--color-surface-2)",
+              }}
+            >
+              {(torneo.genero ?? "masculino").toUpperCase()}
+            </span>
+
+            <span
+              className="inline-block px-3 py-1 text-xs rounded"
+              style={{
+                background:
+                  "var(--color-surface-2)",
+              }}
+            >
+              {torneo.categoria.toUpperCase()}
+            </span>
+          </div>
         </div>
 
         {/* PUNTAJE */}
         <div className="card">
-          <h3 className="card-title">Puntaje del torneo</h3>
+          <h3 className="card-title">
+            Puntaje del torneo
+          </h3>
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-            <div>🏆 Campeón: {torneo.puntos.campeon}</div>
-            <div>🥈 Finalista: {torneo.puntos.finalista}</div>
-            <div>🥉 Semi: {torneo.puntos.semifinal}</div>
-            <div>🎾 Cuartos: {torneo.puntos.cuartos}</div>
+            <div>
+              🏆 Campeón:{" "}
+              {torneo.puntos.campeon}
+            </div>
+
+            <div>
+              🥈 Finalista:{" "}
+              {torneo.puntos.finalista}
+            </div>
+
+            <div>
+              🥉 Semi:{" "}
+              {torneo.puntos.semifinal}
+            </div>
+
+            <div>
+              🎾 Cuartos:{" "}
+              {torneo.puntos.cuartos}
+            </div>
           </div>
         </div>
 
         {/* RANKING */}
         <div className="card">
-          <h3 className="card-title">Ranking de inscriptos</h3>
+          <h3 className="card-title">
+            Ranking de inscriptos
+          </h3>
 
-          {rankingParcial.length === 0 ? (
-            <p style={{ color: "var(--color-text-muted)" }}>
+          {rankingParcial.length ===
+          0 ? (
+            <p
+              style={{
+                color:
+                  "var(--color-text-muted)",
+              }}
+            >
               Aún no hay jugadores.
             </p>
           ) : (
             <div className="flex flex-col gap-2">
-              {rankingParcial.map((j, i) => (
-                <div
-                  key={j.dni} // 🔥 CORREGIDO
-                  className="flex justify-between px-3 py-2 rounded-md"
-                  style={{
-                    background:
-                      i === 0
-                        ? "var(--color-primary)"
-                        : i === 1
-                        ? "var(--color-accent)"
-                        : "var(--color-surface-2)",
-                    color: i <= 1 ? "#000" : "var(--color-text)",
-                  }}
-                >
-                  <span>
-                    #{i + 1} {j.nombre}
-                  </span>
-                  <span>{j.puntos} pts</span>
-                </div>
-              ))}
+              {rankingParcial.map(
+                (j, i) => (
+                  <div
+                    key={j.dni}
+                    className="flex justify-between px-3 py-2 rounded-md"
+                    style={{
+                      background:
+                        i === 0
+                          ? "var(--color-primary)"
+                          : i === 1
+                          ? "var(--color-accent)"
+                          : "var(--color-surface-2)",
+
+                      color:
+                        i <= 1
+                          ? "#000"
+                          : "var(--color-text)",
+                    }}
+                  >
+                    <span>
+                      #{i + 1}{" "}
+                      {j.nombre}
+                    </span>
+
+                    <span>
+                      {j.puntos} pts
+                    </span>
+                  </div>
+                )
+              )}
             </div>
           )}
         </div>
 
         {/* PAREJAS */}
         <div className="card">
-          <h3 className="card-title">Parejas inscriptas</h3>
+          <h3 className="card-title">
+            Parejas inscriptas
+          </h3>
 
-          {torneo.parejas.length === 0 ? (
-            <p style={{ color: "var(--color-text-muted)" }}>
+          {torneo.parejas.length ===
+          0 ? (
+            <p
+              style={{
+                color:
+                  "var(--color-text-muted)",
+              }}
+            >
               Sin inscripciones.
             </p>
           ) : (
             <div className="flex flex-col gap-2">
-              {torneo.parejas.map((p, idx) => {
-                const j1 = buscarJugador(p.dni1);
-                const j2 = buscarJugador(p.dni2);
+              {torneo.parejas.map(
+                (p, idx) => {
+                  const j1 =
+                    buscarJugador(
+                      p.dni1
+                    );
 
-                return (
-                  <div
-                    key={`${p.dni1}-${p.dni2}`}
-                    className="px-3 py-2 rounded-md flex justify-between"
-                    style={{ background: "var(--color-surface-2)" }}
-                  >
-                    <span>Pareja {idx + 1}</span>
-                    <span className="text-sm">
-                      {j1?.nombre ?? p.dni1} & {j2?.nombre ?? p.dni2}
-                    </span>
-                  </div>
-                );
-              })}
+                  const j2 =
+                    buscarJugador(
+                      p.dni2
+                    );
+
+                  return (
+                    <div
+                      key={`${p.dni1}-${p.dni2}`}
+                      className="px-3 py-2 rounded-md flex justify-between items-center"
+                      style={{
+                        background:
+                          "var(--color-surface-2)",
+                      }}
+                    >
+                      <div>
+                        <div className="font-semibold">
+                          Pareja{" "}
+                          {idx + 1}
+                        </div>
+
+                        <div className="text-sm">
+                          {j1?.nombre ??
+                            p.dni1}{" "}
+                          &{" "}
+                          {j2?.nombre ??
+                            p.dni2}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          removePairFromTournament(
+                            torneo.id,
+                            p.dni1,
+                            p.dni2
+                          );
+
+                          window.location.reload();
+                        }}
+                        className="px-3 py-1 rounded-md text-sm font-semibold"
+                        style={{
+                          background:
+                            "#ff4d4d",
+
+                          color: "#fff",
+                        }}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  );
+                }
+              )}
             </div>
           )}
         </div>
 
         {/* ZONAS */}
-        {torneo.parejas.length >= 20 && (
+        {torneo.parejas.length >=
+          20 && (
           <div className="card">
-            <h3 className="card-title">Zonas</h3>
+            <h3 className="card-title">
+              Zonas
+            </h3>
 
             {zonas.map((zona) => (
-              <div key={zona.nombre} className="mb-4">
-                <h4 className="font-semibold mb-2">{zona.nombre}</h4>
+              <div
+                key={zona.nombre}
+                className="mb-4"
+              >
+                <h4 className="font-semibold mb-2">
+                  {zona.nombre}
+                </h4>
 
                 <div className="flex flex-col gap-2">
-                  {zona.parejas.map((p, idx) => {
-                    const j1 = buscarJugador(p.dni1);
-                    const j2 = buscarJugador(p.dni2);
+                  {zona.parejas.map(
+                    (p, idx) => {
+                      const j1 =
+                        buscarJugador(
+                          p.dni1
+                        );
 
-                    return (
-                      <div
-                        key={`${p.dni1}-${p.dni2}`}
-                        className="px-3 py-2 rounded-md flex justify-between"
-                        style={{ background: "var(--color-surface-2)" }}
-                      >
-                        <span>Pareja {idx + 1}</span>
-                        <span>
-                          {j1?.nombre ?? p.dni1} & {j2?.nombre ?? p.dni2}
-                        </span>
-                      </div>
-                    );
-                  })}
+                      const j2 =
+                        buscarJugador(
+                          p.dni2
+                        );
+
+                      return (
+                        <div
+                          key={`${p.dni1}-${p.dni2}`}
+                          className="px-3 py-2 rounded-md flex justify-between"
+                          style={{
+                            background:
+                              "var(--color-surface-2)",
+                          }}
+                        >
+                          <span>
+                            Pareja{" "}
+                            {idx + 1}
+                          </span>
+
+                          <span>
+                            {j1?.nombre ??
+                              p.dni1}{" "}
+                            &{" "}
+                            {j2?.nombre ??
+                              p.dni2}
+                          </span>
+                        </div>
+                      );
+                    }
+                  )}
                 </div>
               </div>
             ))}
@@ -183,7 +367,9 @@ export default function TorneoDetailPage() {
           target="_blank"
           className="text-center py-3 rounded-lg font-semibold"
           style={{
-            background: "var(--color-accent)",
+            background:
+              "var(--color-accent)",
+
             color: "#000",
           }}
         >

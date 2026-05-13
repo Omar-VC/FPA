@@ -10,11 +10,7 @@ const nivelOrden = {
   avanzado: 3,
 };
 
-export function validatePair(
-  torneo: Torneo,
-  dni1: string,
-  dni2: string
-) {
+export function validatePair(torneo: Torneo, dni1: string, dni2: string) {
   // mismo jugador
   if (dni1 === dni2) {
     return {
@@ -24,15 +20,13 @@ export function validatePair(
   }
 
   // validar jugadores activos
-  const player1Validation =
-    canPlayerJoinTournament(dni1);
+  const player1Validation = canPlayerJoinTournament(dni1);
 
   if (!player1Validation.valid) {
     return player1Validation;
   }
 
-  const player2Validation =
-    canPlayerJoinTournament(dni2);
+  const player2Validation = canPlayerJoinTournament(dni2);
 
   if (!player2Validation.valid) {
     return player2Validation;
@@ -40,13 +34,9 @@ export function validatePair(
 
   const players = getAllPlayers();
 
-  const jugador1 = players.find(
-    (j) => j.dni === dni1
-  );
+  const jugador1 = players.find((j) => j.dni === dni1);
 
-  const jugador2 = players.find(
-    (j) => j.dni === dni2
-  );
+  const jugador2 = players.find((j) => j.dni === dni2);
 
   if (!jugador1 || !jugador2) {
     return {
@@ -55,15 +45,45 @@ export function validatePair(
     };
   }
 
+  // validar género del torneo
+
+  if (torneo.genero === "masculino") {
+    if (jugador1.genero !== "masculino" || jugador2.genero !== "masculino") {
+      return {
+        valid: false,
+        reason: "El torneo es solo masculino",
+      };
+    }
+  }
+
+  if (torneo.genero === "femenino") {
+    if (jugador1.genero !== "femenino" || jugador2.genero !== "femenino") {
+      return {
+        valid: false,
+        reason: "El torneo es solo femenino",
+      };
+    }
+  }
+
+  if (torneo.genero === "mixto") {
+    const mezclaCorrecta =
+      (jugador1.genero === "masculino" && jugador2.genero === "femenino") ||
+      (jugador1.genero === "femenino" && jugador2.genero === "masculino");
+
+    if (!mezclaCorrecta) {
+      return {
+        valid: false,
+        reason: "El torneo mixto requiere un hombre y una mujer",
+      };
+    }
+  }
+
   // validar categoría
-  const categoriaTorneo =
-    nivelOrden[torneo.categoria];
+  const categoriaTorneo = nivelOrden[torneo.categoria];
 
-  const nivelJugador1 =
-    nivelOrden[jugador1.nivel];
+  const nivelJugador1 = nivelOrden[jugador1.nivel];
 
-  const nivelJugador2 =
-    nivelOrden[jugador2.nivel];
+  const nivelJugador2 = nivelOrden[jugador2.nivel];
 
   if (nivelJugador1 > categoriaTorneo) {
     return {
@@ -83,7 +103,7 @@ export function validatePair(
   const alreadyExists = torneo.parejas.some(
     (p) =>
       (p.dni1 === dni1 && p.dni2 === dni2) ||
-      (p.dni1 === dni2 && p.dni2 === dni1)
+      (p.dni1 === dni2 && p.dni2 === dni1),
   );
 
   if (alreadyExists) {

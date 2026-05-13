@@ -12,6 +12,10 @@ type CreateTournamentInput = {
   fecha: string;
   lugar: string;
   categoria: "iniciado" | "intermedio" | "avanzado";
+  genero:
+  | "masculino"
+  | "femenino"
+  | "mixto";
   puntos: Torneo["puntos"];
   parejas: { dni1: string; dni2: string }[];
 };
@@ -30,7 +34,7 @@ export function createTournamentService(data: CreateTournamentInput) {
     parejas: data.parejas,
 
     categoria: data.categoria,
-
+    genero: data.genero,
     cupoMaximo: 16,
   });
 }

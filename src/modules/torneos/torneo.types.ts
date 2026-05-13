@@ -1,5 +1,8 @@
 export type EstadoTorneo = "abierto" | "en juego" | "finalizado";
-
+export type GeneroTorneo =
+  | "masculino"
+  | "femenino"
+  | "mixto";
 export interface Pareja {
   dni1: string;
   dni2: string;
@@ -21,6 +24,7 @@ export interface Torneo {
   estado: EstadoTorneo;
 
   categoria: "iniciado" | "intermedio" | "avanzado";
+  genero: GeneroTorneo;
   cupoMaximo: 16;
   inscriptos: number;
 

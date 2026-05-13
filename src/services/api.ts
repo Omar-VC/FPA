@@ -18,7 +18,7 @@ const TOURNAMENTS_KEY = "fpa_tournaments";
  * =========================
  */
 
-function loadPlayers() {
+function loadPlayers(): Jugador[] {
   const data = localStorage.getItem(PLAYERS_KEY);
 
   if (data) {
@@ -45,7 +45,7 @@ function loadTournaments(): Torneo[] {
   return [];
 }
 
-function savePlayers(players: any[]) {
+function savePlayers(players: Jugador[]) {
   localStorage.setItem(
     PLAYERS_KEY,
     JSON.stringify(players)
@@ -82,13 +82,13 @@ export function getPlayers() {
   return players;
 }
 
-export function addPlayer(player: any) {
+export function addPlayer(player: Partial<Jugador>) {
   players.push({
     ...player,
     id: crypto.randomUUID(),
     puntos: player.puntos ?? 0,
     estado: player.estado ?? "pendiente",
-  });
+  } as Jugador);
 
   savePlayers(players);
 }
@@ -121,6 +121,8 @@ export function createTournament(
     lugar: data.lugar,
 
     categoria: data.categoria,
+
+    genero: data.genero,
 
     cupoMaximo: data.cupoMaximo,
 
@@ -157,13 +159,42 @@ export function addPairToTournament(
 
   const existe = torneo.parejas.some(
     (p) =>
-      p.dni1 === pareja.dni1 &&
-      p.dni2 === pareja.dni2
+      (p.dni1 === pareja.dni1 &&
+        p.dni2 === pareja.dni2) ||
+      (p.dni1 === pareja.dni2 &&
+        p.dni2 === pareja.dni1)
   );
 
   if (existe) return;
 
   torneo.parejas.push(pareja);
+
+  torneo.inscriptos =
+    torneo.parejas.length;
+
+  saveTournaments(torneos);
+}
+
+export function removePairFromTournament(
+  torneoId: string,
+  dni1: string,
+  dni2: string
+) {
+  const torneo = torneos.find(
+    (t) => t.id === torneoId
+  );
+
+  if (!torneo) return;
+
+  torneo.parejas = torneo.parejas.filter(
+    (p) =>
+      !(
+        (p.dni1 === dni1 &&
+          p.dni2 === dni2) ||
+        (p.dni1 === dni2 &&
+          p.dni2 === dni1)
+      )
+  );
 
   torneo.inscriptos =
     torneo.parejas.length;
