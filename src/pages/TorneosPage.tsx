@@ -96,6 +96,21 @@ export default function TorneosPage() {
               >
                 <h3 className="text-lg font-semibold">{t.nombre}</h3>
 
+                <div
+                  className="w-fit px-2 py-1 rounded text-xs font-semibold"
+                  style={{
+                    background:
+                      t.genero === "masculino"
+                        ? "var(--color-primary)"
+                        : t.genero === "femenino"
+                          ? "#ff4fa3"
+                          : "var(--color-accent)",
+                    color: "#000",
+                  }}
+                >
+                  {t.genero.toUpperCase()}
+                </div>
+
                 <p className="text-sm opacity-70">
                   {t.fecha} • {t.lugar}
                 </p>
