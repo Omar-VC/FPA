@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PublicLayout from "../layouts/PublicLayout";
-import { getPlayers } from "../services/api";
+import { getPlayers, addPlayer } from "../services/api";
 
 export default function InscripcionPage() {
   const [formData, setFormData] = useState({
@@ -26,27 +26,34 @@ export default function InscripcionPage() {
     const jugadores = getPlayers();
 
     // Validar si ya existe
-    const existe = jugadores.find(j => j.dni === formData.dni);
+    const existe = jugadores.find((j) => j.dni === formData.dni);
 
     if (existe) {
       alert("El jugador ya está registrado");
       return;
     }
 
-    const nuevoJugador = {
-      id: crypto.randomUUID(),
+    const puntosIniciales =
+      formData.nivel === "iniciado"
+        ? 100
+        : formData.nivel === "intermedio"
+          ? 1000
+          : 2000;
+
+    addPlayer({
       nombre: formData.nombre,
       apodo: formData.apodo || undefined,
       dni: formData.dni,
       ciudad: formData.ciudad,
-      genero: formData.sexo as "masculino" | "femenino",
-      nivel: formData.nivel as "iniciado" | "intermedio" | "avanzado",
-      puntos: 0,
-      tournamentsPlayed: 0,
-      tournamentsWon: 0,
-    };
 
-    jugadores.push(nuevoJugador);
+      genero: formData.sexo as "masculino" | "femenino",
+
+      nivel: formData.nivel as "iniciado" | "intermedio" | "avanzado",
+
+      puntos: puntosIniciales,
+
+      estado: "activo",
+    });
 
     alert("Jugador inscripto correctamente");
 
@@ -64,7 +71,6 @@ export default function InscripcionPage() {
   return (
     <PublicLayout>
       <div className="w-full max-w-2xl mx-auto flex flex-col gap-6">
-
         <div
           className="rounded-xl p-5"
           style={{
@@ -86,14 +92,55 @@ export default function InscripcionPage() {
             border: "1px solid var(--color-border)",
           }}
         >
-          <Input label="Nombre completo" name="nombre" value={formData.nombre} onChange={handleChange} required />
-          <Input label="Apodo" name="apodo" value={formData.apodo} onChange={handleChange} />
-          <Input label="DNI" name="dni" value={formData.dni} onChange={handleChange} required />
-          <Input label="Ciudad" name="ciudad" value={formData.ciudad} onChange={handleChange} required />
+          <Input
+            label="Nombre completo"
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            label="Apodo"
+            name="apodo"
+            value={formData.apodo}
+            onChange={handleChange}
+          />
+          <Input
+            label="DNI"
+            name="dni"
+            value={formData.dni}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            label="Ciudad"
+            name="ciudad"
+            value={formData.ciudad}
+            onChange={handleChange}
+            required
+          />
 
-          <Select label="Sexo" name="sexo" value={formData.sexo} onChange={handleChange} options={["masculino", "femenino"]} />
-          <Select label="Nivel" name="nivel" value={formData.nivel} onChange={handleChange} options={["iniciado", "intermedio", "avanzado"]} />
-          <Select label="Lado" name="lado" value={formData.lado} onChange={handleChange} options={["revez", "drive"]} />
+          <Select
+            label="Sexo"
+            name="sexo"
+            value={formData.sexo}
+            onChange={handleChange}
+            options={["masculino", "femenino"]}
+          />
+          <Select
+            label="Nivel"
+            name="nivel"
+            value={formData.nivel}
+            onChange={handleChange}
+            options={["iniciado", "intermedio", "avanzado"]}
+          />
+          <Select
+            label="Lado"
+            name="lado"
+            value={formData.lado}
+            onChange={handleChange}
+            options={["revez", "drive"]}
+          />
 
           <button
             type="submit"

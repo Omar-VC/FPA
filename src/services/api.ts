@@ -1,14 +1,76 @@
 import type { Torneo } from "../modules/torneos/torneo.types";
+
 import { jugadoresMock } from "../modules/jugadores/jugador.mock";
+import type { Jugador } from "../modules/jugadores/jugador.types";
 
 /**
  * =========================
- * MOCK DB EN MEMORIA
+ * LOCAL STORAGE KEYS
  * =========================
  */
 
-let torneos: Torneo[] = [];
-let players = [...jugadoresMock];
+const PLAYERS_KEY = "fpa_players";
+const TOURNAMENTS_KEY = "fpa_tournaments";
+
+/**
+ * =========================
+ * HELPERS
+ * =========================
+ */
+
+function loadPlayers() {
+  const data = localStorage.getItem(PLAYERS_KEY);
+
+  if (data) {
+    return JSON.parse(data);
+  }
+
+  localStorage.setItem(
+    PLAYERS_KEY,
+    JSON.stringify(jugadoresMock)
+  );
+
+  return [...jugadoresMock];
+}
+
+function loadTournaments(): Torneo[] {
+  const data = localStorage.getItem(
+    TOURNAMENTS_KEY
+  );
+
+  if (data) {
+    return JSON.parse(data);
+  }
+
+  return [];
+}
+
+function savePlayers(players: any[]) {
+  localStorage.setItem(
+    PLAYERS_KEY,
+    JSON.stringify(players)
+  );
+}
+
+function saveTournaments(
+  torneos: Torneo[]
+) {
+  localStorage.setItem(
+    TOURNAMENTS_KEY,
+    JSON.stringify(torneos)
+  );
+}
+
+/**
+ * =========================
+ * MOCK DB
+ * =========================
+ */
+
+let players: Jugador[] = loadPlayers();
+
+let torneos: Torneo[] =
+  loadTournaments();
 
 /**
  * =========================
@@ -27,6 +89,8 @@ export function addPlayer(player: any) {
     puntos: player.puntos ?? 0,
     estado: player.estado ?? "pendiente",
   });
+
+  savePlayers(players);
 }
 
 /**
@@ -40,20 +104,25 @@ export function getTournaments(): Torneo[] {
 }
 
 export function createTournament(
-  data: Omit<Torneo, "id" | "estado" | "inscriptos">
+  data: Omit<
+    Torneo,
+    "id" | "estado" | "inscriptos"
+  >
 ): Torneo {
   const newTournament: Torneo = {
     id: crypto.randomUUID(),
 
     estado: "abierto",
+
     inscriptos: data.parejas.length,
 
     nombre: data.nombre,
     fecha: data.fecha,
     lugar: data.lugar,
 
-    categoria: data.categoria ?? "libre",
-    cupoMaximo: data.cupoMaximo ?? 999,
+    categoria: data.categoria,
+
+    cupoMaximo: data.cupoMaximo,
 
     parejas: data.parejas,
 
@@ -61,39 +130,59 @@ export function createTournament(
   };
 
   torneos.push(newTournament);
+
+  saveTournaments(torneos);
+
   return newTournament;
 }
 
 /**
  * =========================
- * INSCRIPCIÓN A TORNEO
+ * INSCRIPCIÓN
  * =========================
  */
 
 export function addPairToTournament(
   torneoId: string,
-  pareja: { dni1: string; dni2: string }
+  pareja: {
+    dni1: string;
+    dni2: string;
+  }
 ) {
-  const torneo = torneos.find((t) => t.id === torneoId);
+  const torneo = torneos.find(
+    (t) => t.id === torneoId
+  );
+
   if (!torneo) return;
 
-  // evitar duplicados
   const existe = torneo.parejas.some(
-    (p) => p.dni1 === pareja.dni1 && p.dni2 === pareja.dni2
+    (p) =>
+      p.dni1 === pareja.dni1 &&
+      p.dni2 === pareja.dni2
   );
 
   if (existe) return;
 
   torneo.parejas.push(pareja);
-  torneo.inscriptos = torneo.parejas.length;
+
+  torneo.inscriptos =
+    torneo.parejas.length;
+
+  saveTournaments(torneos);
 }
 
 /**
  * =========================
- * OPCIONAL: LIMPIAR TORNEO
+ * ELIMINAR TORNEO
  * =========================
  */
 
-export function deleteTournament(id: string) {
-  torneos = torneos.filter((t) => t.id !== id);
+export function deleteTournament(
+  id: string
+) {
+  torneos = torneos.filter(
+    (t) => t.id !== id
+  );
+
+  saveTournaments(torneos);
 }
