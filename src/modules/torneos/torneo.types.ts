@@ -26,6 +26,7 @@ export interface Torneo {
   categoria: "iniciado" | "intermedio" | "avanzado";
   genero: GeneroTorneo;
   cupoMaximo: 16;
+  precioInscripcion: number;
   inscriptos: number;
 
   parejas: Pareja[];

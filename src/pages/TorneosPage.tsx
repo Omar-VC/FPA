@@ -1,48 +1,11 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 import { TrophyIcon } from "@heroicons/react/24/solid";
-import { getTournaments, addPairToTournament } from "../services/api";
-import { validatePair } from "../modules/torneos/rules";
+import { getTournaments } from "../services/api";
 
 export default function TorneosPage() {
-  const [selectedTorneo, setSelectedTorneo] = useState<string | null>(null);
-  const [dni1, setDni1] = useState("");
-  const [dni2, setDni2] = useState("");
-
+  
   const torneos = getTournaments();
-
-  const handleInscripcion = () => {
-    if (!dni1 || !dni2 || !selectedTorneo) {
-      alert("Completá los DNIs");
-      return;
-    }
-
-    const torneo = torneos.find((t) => t.id === selectedTorneo);
-
-    if (!torneo) {
-      alert("Torneo no encontrado");
-      return;
-    }
-
-    const validation = validatePair(torneo, dni1, dni2);
-
-    if (!validation.valid) {
-      alert(validation.reason);
-      return;
-    }
-
-    addPairToTournament(selectedTorneo, {
-      dni1,
-      dni2,
-    });
-
-    alert("Inscripción enviada");
-
-    setDni1("");
-    setDni2("");
-    setSelectedTorneo(null);
-  };
 
   return (
     <PublicLayout>
@@ -111,9 +74,23 @@ export default function TorneosPage() {
                   {t.genero.toUpperCase()}
                 </div>
 
-                <p className="text-sm opacity-70">
-                  {t.fecha} • {t.lugar}
-                </p>
+                <div className="text-sm opacity-70 flex flex-col gap-1">
+                  <span>
+                    {t.fecha} • {t.lugar}
+                  </span>
+
+                  <span>Categoría: {t.categoria}</span>
+
+                  <span>
+                    Modalidad: {(t.genero ?? "masculino").toUpperCase()}
+                  </span>
+
+                  <span>
+                    Cupos: {t.inscriptos}/{t.cupoMaximo}
+                  </span>
+
+                  <span>Inscripción: ${t.precioInscripcion ?? 0}</span>
+                </div>
 
                 <span
                   className="text-xs font-semibold px-2 py-1 rounded w-fit"
@@ -131,17 +108,6 @@ export default function TorneosPage() {
                 </span>
 
                 <div className="flex gap-3 mt-2">
-                  <button
-                    onClick={() => setSelectedTorneo(t.id)}
-                    className="px-3 py-1.5 rounded-md text-sm font-semibold"
-                    style={{
-                      background: "var(--color-primary)",
-                      color: "#000",
-                    }}
-                  >
-                    Inscribirse
-                  </button>
-
                   <Link
                     to={`/torneos/${t.id}`}
                     className="px-3 py-1.5 rounded-md text-sm font-semibold"
@@ -155,48 +121,6 @@ export default function TorneosPage() {
                 </div>
               </div>
             ))}
-          </div>
-        )}
-
-        {/* FORM */}
-        {selectedTorneo && (
-          <div
-            className="rounded-xl p-5 flex flex-col gap-3"
-            style={{
-              background: "var(--color-surface)",
-              border: "1px solid var(--color-border)",
-            }}
-          >
-            <h2 className="font-semibold text-lg">Inscripción de pareja</h2>
-
-            <input
-              type="text"
-              value={dni1}
-              onChange={(e) => setDni1(e.target.value)}
-              placeholder="DNI Jugador 1"
-              className="p-2 rounded-md bg-transparent border"
-              style={{ borderColor: "var(--color-border)" }}
-            />
-
-            <input
-              type="text"
-              value={dni2}
-              onChange={(e) => setDni2(e.target.value)}
-              placeholder="DNI Jugador 2"
-              className="p-2 rounded-md bg-transparent border"
-              style={{ borderColor: "var(--color-border)" }}
-            />
-
-            <button
-              onClick={handleInscripcion}
-              className="mt-2 px-4 py-2 rounded-md font-semibold"
-              style={{
-                background: "var(--color-accent)",
-                color: "#000",
-              }}
-            >
-              Confirmar inscripción
-            </button>
           </div>
         )}
       </div>

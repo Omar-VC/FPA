@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 import PublicLayout from "../layouts/PublicLayout";
@@ -6,15 +7,33 @@ import {
   getTournaments,
   getPlayers,
   removePairFromTournament,
+  addPairToTournament,
 } from "../services/api";
 
 import { generarZonas } from "../modules/torneos/torneo.utils";
+
+import {
+  validatePair,
+  validateOrganizerCode,
+} from "../modules/torneos/rules";
 
 export default function TorneoDetailPage() {
   const torneos = getTournaments();
 
   const jugadoresFederados =
     getPlayers();
+
+  const [organizerMode, setOrganizerMode] =
+    useState(false);
+
+  const [codigo, setCodigo] =
+    useState("");
+
+  const [dni1, setDni1] =
+    useState("");
+
+  const [dni2, setDni2] =
+    useState("");
 
   const { id } = useParams<{
     id: string;
@@ -31,7 +50,8 @@ export default function TorneoDetailPage() {
           <h1
             className="text-xl font-bold"
             style={{
-              color: "var(--color-accent)",
+              color:
+                "var(--color-accent)",
             }}
           >
             Torneo no encontrado
@@ -68,6 +88,59 @@ export default function TorneoDetailPage() {
         (a, b) => b.puntos - a.puntos
       );
 
+  const handleAgregarPareja =
+    () => {
+      const validation =
+        validatePair(
+          torneo,
+          dni1,
+          dni2
+        );
+
+      if (!validation.valid) {
+        alert(validation.reason);
+
+        return;
+      }
+
+      addPairToTournament(
+        torneo.id,
+        {
+          dni1,
+          dni2,
+        }
+      );
+
+      alert(
+        "Pareja agregada"
+      );
+
+      setDni1("");
+      setDni2("");
+
+      window.location.reload();
+    };
+
+  const handleIngresarComoOrganizador =
+    () => {
+      const valid =
+        validateOrganizerCode(
+          codigo
+        );
+
+      if (!valid) {
+        alert("Código inválido");
+
+        return;
+      }
+
+      setOrganizerMode(true);
+
+      alert(
+        "Modo organizador activado"
+      );
+    };
+
   return (
     <PublicLayout>
       <div className="w-full max-w-5xl mx-auto flex flex-col gap-6">
@@ -98,7 +171,8 @@ export default function TorneoDetailPage() {
               className="inline-block px-3 py-1 text-xs rounded"
               style={{
                 background:
-                  torneo.estado === "abierto"
+                  torneo.estado ===
+                  "abierto"
                     ? "var(--color-primary)"
                     : torneo.estado ===
                       "en juego"
@@ -122,7 +196,10 @@ export default function TorneoDetailPage() {
                   "var(--color-surface-2)",
               }}
             >
-              {(torneo.genero ?? "masculino").toUpperCase()}
+              {(
+                torneo.genero ??
+                "masculino"
+              ).toUpperCase()}
             </span>
 
             <span
@@ -137,6 +214,92 @@ export default function TorneoDetailPage() {
           </div>
         </div>
 
+        {/* ACCESO ORGANIZADOR */}
+        {!organizerMode && (
+          <div className="card">
+            <h3 className="card-title">
+              Acceso organizador
+            </h3>
+
+            <div className="flex gap-2">
+              <input
+                type="password"
+                value={codigo}
+                onChange={(e) =>
+                  setCodigo(
+                    e.target.value
+                  )
+                }
+                placeholder="Ingresar código"
+                className="input"
+              />
+
+              <button
+                onClick={
+                  handleIngresarComoOrganizador
+                }
+                className="px-4 py-2 rounded-md font-semibold"
+                style={{
+                  background:
+                    "var(--color-primary)",
+
+                  color: "#000",
+                }}
+              >
+                Soy organizador
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ORGANIZADOR */}
+        {organizerMode && (
+          <div className="card">
+            <h3 className="card-title">
+              Panel organizador
+            </h3>
+
+            <div className="flex gap-2">
+              <input
+                value={dni1}
+                onChange={(e) =>
+                  setDni1(
+                    e.target.value
+                  )
+                }
+                placeholder="DNI jugador 1"
+                className="input"
+              />
+
+              <input
+                value={dni2}
+                onChange={(e) =>
+                  setDni2(
+                    e.target.value
+                  )
+                }
+                placeholder="DNI jugador 2"
+                className="input"
+              />
+
+              <button
+                onClick={
+                  handleAgregarPareja
+                }
+                className="px-4 py-2 rounded-md font-semibold"
+                style={{
+                  background:
+                    "var(--color-primary)",
+
+                  color: "#000",
+                }}
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* PUNTAJE */}
         <div className="card">
           <h3 className="card-title">
@@ -146,22 +309,34 @@ export default function TorneoDetailPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
             <div>
               🏆 Campeón:{" "}
-              {torneo.puntos.campeon}
+              {
+                torneo.puntos
+                  .campeon
+              }
             </div>
 
             <div>
               🥈 Finalista:{" "}
-              {torneo.puntos.finalista}
+              {
+                torneo.puntos
+                  .finalista
+              }
             </div>
 
             <div>
               🥉 Semi:{" "}
-              {torneo.puntos.semifinal}
+              {
+                torneo.puntos
+                  .semifinal
+              }
             </div>
 
             <div>
               🎾 Cuartos:{" "}
-              {torneo.puntos.cuartos}
+              {
+                torneo.puntos
+                  .cuartos
+              }
             </div>
           </div>
         </div>
@@ -209,7 +384,10 @@ export default function TorneoDetailPage() {
                     </span>
 
                     <span>
-                      {j.puntos} pts
+                      {
+                        j.puntos
+                      }{" "}
+                      pts
                     </span>
                   </div>
                 )
@@ -272,26 +450,29 @@ export default function TorneoDetailPage() {
                         </div>
                       </div>
 
-                      <button
-                        onClick={() => {
-                          removePairFromTournament(
-                            torneo.id,
-                            p.dni1,
-                            p.dni2
-                          );
+                      {organizerMode && (
+                        <button
+                          onClick={() => {
+                            removePairFromTournament(
+                              torneo.id,
+                              p.dni1,
+                              p.dni2
+                            );
 
-                          window.location.reload();
-                        }}
-                        className="px-3 py-1 rounded-md text-sm font-semibold"
-                        style={{
-                          background:
-                            "#ff4d4d",
+                            window.location.reload();
+                          }}
+                          className="px-3 py-1 rounded-md text-sm font-semibold"
+                          style={{
+                            background:
+                              "#ff4d4d",
 
-                          color: "#fff",
-                        }}
-                      >
-                        Eliminar
-                      </button>
+                            color:
+                              "#fff",
+                          }}
+                        >
+                          Eliminar
+                        </button>
+                      )}
                     </div>
                   );
                 }
