@@ -111,6 +111,8 @@ export function createTournament(
 
     precioInscripcion: data.precioInscripcion,
 
+    telefonoOrganizador: data.telefonoOrganizador,
+
     parejas: data.parejas,
 
     puntos: data.puntos,

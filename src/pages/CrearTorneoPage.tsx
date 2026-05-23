@@ -18,6 +18,10 @@ export default function CrearTorneoPage() {
   const [genero, setGenero] = useState<"masculino" | "femenino" | "mixto">(
     "masculino",
   );
+  const [cupoMaximo, setCupoMaximo] = useState(16);
+
+  const [precioInscripcion, setPrecioInscripcion] = useState(0);
+  const [telefonoOrganizador, setTelefonoOrganizador] = useState("");
 
   const [puntosCampeon, setPuntosCampeon] = useState(200);
   const [puntosFinalista, setPuntosFinalista] = useState(150);
@@ -78,6 +82,9 @@ export default function CrearTorneoPage() {
         cuartos: puntosCuartos,
       },
       parejas,
+      cupoMaximo,
+      precioInscripcion,
+      telefonoOrganizador,
     });
 
     alert("Torneo creado");
@@ -85,6 +92,9 @@ export default function CrearTorneoPage() {
     setNombre("");
     setFecha("");
     setLugar("");
+    setCupoMaximo(16);
+    setPrecioInscripcion(0);
+    setTelefonoOrganizador("");
     setParejas([]);
     setCodigo("");
     setHabilitado(false);
@@ -185,6 +195,28 @@ export default function CrearTorneoPage() {
 
                   <option value="mixto">Mixto</option>
                 </select>
+                <input
+                  type="number"
+                  value={cupoMaximo}
+                  onChange={(e) => setCupoMaximo(Number(e.target.value))}
+                  placeholder="Cupo máximo"
+                  className="input"
+                />
+                <input
+                  type="number"
+                  value={precioInscripcion}
+                  onChange={(e) => setPrecioInscripcion(Number(e.target.value))}
+                  placeholder="Precio de inscripcion"
+                  className="input"
+                />
+
+                <input
+                  type="text"
+                  value={telefonoOrganizador}
+                  onChange={(e) => setTelefonoOrganizador(e.target.value)}
+                  placeholder="WhatsApp organizador"
+                  className="input"
+                />
               </div>
             </div>
 

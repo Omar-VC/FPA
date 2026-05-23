@@ -16,6 +16,13 @@ type CreateTournamentInput = {
   | "masculino"
   | "femenino"
   | "mixto";
+
+  cupoMaximo: number;
+
+  precioInscripcion: number;
+
+  telefonoOrganizador: string;
+
   puntos: Torneo["puntos"];
   parejas: { dni1: string; dni2: string }[];
 };
@@ -35,7 +42,9 @@ export function createTournamentService(data: CreateTournamentInput) {
 
     categoria: data.categoria,
     genero: data.genero,
-    cupoMaximo: 16,
+    cupoMaximo: data.cupoMaximo,
+    precioInscripcion: data.precioInscripcion,
+    telefonoOrganizador: data.telefonoOrganizador,
   });
 }
 // ==========================
