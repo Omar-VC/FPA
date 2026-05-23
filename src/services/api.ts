@@ -25,18 +25,13 @@ function loadPlayers(): Jugador[] {
     return JSON.parse(data);
   }
 
-  localStorage.setItem(
-    PLAYERS_KEY,
-    JSON.stringify(jugadoresMock)
-  );
+  localStorage.setItem(PLAYERS_KEY, JSON.stringify(jugadoresMock));
 
   return [...jugadoresMock];
 }
 
 function loadTournaments(): Torneo[] {
-  const data = localStorage.getItem(
-    TOURNAMENTS_KEY
-  );
+  const data = localStorage.getItem(TOURNAMENTS_KEY);
 
   if (data) {
     return JSON.parse(data);
@@ -46,19 +41,11 @@ function loadTournaments(): Torneo[] {
 }
 
 function savePlayers(players: Jugador[]) {
-  localStorage.setItem(
-    PLAYERS_KEY,
-    JSON.stringify(players)
-  );
+  localStorage.setItem(PLAYERS_KEY, JSON.stringify(players));
 }
 
-function saveTournaments(
-  torneos: Torneo[]
-) {
-  localStorage.setItem(
-    TOURNAMENTS_KEY,
-    JSON.stringify(torneos)
-  );
+function saveTournaments(torneos: Torneo[]) {
+  localStorage.setItem(TOURNAMENTS_KEY, JSON.stringify(torneos));
 }
 
 /**
@@ -69,8 +56,7 @@ function saveTournaments(
 
 let players: Jugador[] = loadPlayers();
 
-let torneos: Torneo[] =
-  loadTournaments();
+let torneos: Torneo[] = loadTournaments();
 
 /**
  * =========================
@@ -104,10 +90,7 @@ export function getTournaments(): Torneo[] {
 }
 
 export function createTournament(
-  data: Omit<
-    Torneo,
-    "id" | "estado" | "inscriptos"
-  >
+  data: Omit<Torneo, "id" | "estado" | "inscriptos">,
 ): Torneo {
   const newTournament: Torneo = {
     id: crypto.randomUUID(),
@@ -125,6 +108,8 @@ export function createTournament(
     genero: data.genero,
 
     cupoMaximo: data.cupoMaximo,
+
+    precioInscripcion: data.precioInscripcion,
 
     parejas: data.parejas,
 
@@ -149,28 +134,27 @@ export function addPairToTournament(
   pareja: {
     dni1: string;
     dni2: string;
-  }
+  },
 ) {
-  const torneo = torneos.find(
-    (t) => t.id === torneoId
-  );
+  const torneo = torneos.find((t) => t.id === torneoId);
 
   if (!torneo) return;
 
   const existe = torneo.parejas.some(
     (p) =>
-      (p.dni1 === pareja.dni1 &&
-        p.dni2 === pareja.dni2) ||
-      (p.dni1 === pareja.dni2 &&
-        p.dni2 === pareja.dni1)
+      (p.dni1 === pareja.dni1 && p.dni2 === pareja.dni2) ||
+      (p.dni1 === pareja.dni2 && p.dni2 === pareja.dni1),
   );
 
   if (existe) return;
 
   torneo.parejas.push(pareja);
 
-  torneo.inscriptos =
-    torneo.parejas.length;
+  torneo.inscriptos = torneo.parejas.length;
+
+  if (torneo.inscriptos >= torneo.cupoMaximo) {
+    torneo.estado = "cerrado";
+  }
 
   saveTournaments(torneos);
 }
@@ -178,26 +162,38 @@ export function addPairToTournament(
 export function removePairFromTournament(
   torneoId: string,
   dni1: string,
-  dni2: string
+  dni2: string,
 ) {
-  const torneo = torneos.find(
-    (t) => t.id === torneoId
-  );
+  const torneo = torneos.find((t) => t.id === torneoId);
 
   if (!torneo) return;
 
   torneo.parejas = torneo.parejas.filter(
     (p) =>
       !(
-        (p.dni1 === dni1 &&
-          p.dni2 === dni2) ||
-        (p.dni1 === dni2 &&
-          p.dni2 === dni1)
-      )
+        (p.dni1 === dni1 && p.dni2 === dni2) ||
+        (p.dni1 === dni2 && p.dni2 === dni1)
+      ),
   );
 
-  torneo.inscriptos =
-    torneo.parejas.length;
+  torneo.inscriptos = torneo.parejas.length;
+
+  if (torneo.estado === "cerrado") {
+    torneo.estado = "abierto";
+  }
+
+  saveTournaments(torneos);
+}
+
+export function updateTournamentStatus(
+  torneoId: string,
+  estado: "abierto" | "cerrado" | "en juego" | "finalizado",
+) {
+  const torneo = torneos.find((t) => t.id === torneoId);
+
+  if (!torneo) return;
+
+  torneo.estado = estado;
 
   saveTournaments(torneos);
 }
@@ -208,12 +204,8 @@ export function removePairFromTournament(
  * =========================
  */
 
-export function deleteTournament(
-  id: string
-) {
-  torneos = torneos.filter(
-    (t) => t.id !== id
-  );
+export function deleteTournament(id: string) {
+  torneos = torneos.filter((t) => t.id !== id);
 
   saveTournaments(torneos);
 }

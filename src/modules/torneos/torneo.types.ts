@@ -1,4 +1,4 @@
-export type EstadoTorneo = "abierto" | "en juego" | "finalizado";
+export type EstadoTorneo = "abierto" |"cerrado"| "en juego" | "finalizado";
 export type GeneroTorneo =
   | "masculino"
   | "femenino"

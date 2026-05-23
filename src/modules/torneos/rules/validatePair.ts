@@ -113,6 +113,14 @@ export function validatePair(torneo: Torneo, dni1: string, dni2: string) {
     };
   }
 
+  // torneo lleno
+  if (torneo.inscriptos >= torneo.cupoMaximo) {
+    return {
+      valid: false,
+      reason: "El torneo ya alcanzó el cupo máximo",
+    };
+  }
+
   return {
     valid: true,
   };
