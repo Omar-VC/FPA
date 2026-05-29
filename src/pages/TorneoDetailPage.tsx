@@ -67,6 +67,22 @@ export default function TorneoDetailPage() {
     .sort((a, b) => b.puntos - a.puntos);
 
   const handleAgregarPareja = () => {
+    if (
+      torneo.estado === "cerrado" ||
+      torneo.estado === "en juego" ||
+      torneo.estado === "finalizado"
+    ) {
+      alert("El torneo no acepta más inscripciones");
+
+      return;
+    }
+
+    if (torneo.inscriptos >= torneo.cupoMaximo) {
+      alert("No hay más cupos disponibles");
+
+      return;
+    }
+
     const validation = validatePair(torneo, dni1, dni2);
 
     if (!validation.valid) {
@@ -265,7 +281,13 @@ export default function TorneoDetailPage() {
 
               <button
                 onClick={handleAgregarPareja}
-                className="px-4 py-2 rounded-md font-semibold"
+                disabled={
+                  torneo.estado === "cerrado" ||
+                  torneo.estado === "en juego" ||
+                  torneo.estado === "finalizado" ||
+                  torneo.inscriptos >= torneo.cupoMaximo
+                }
+                className="px-4 py-2 rounded-md font-semibold disabled:opacity-50"
                 style={{
                   background: "var(--color-primary)",
 
