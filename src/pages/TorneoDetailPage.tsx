@@ -8,6 +8,7 @@ import {
   getPlayers,
   removePairFromTournament,
   addPairToTournament,
+  updateTournamentStatus,
 } from "../services/api";
 
 import { generarZonas } from "../modules/torneos/torneo.utils";
@@ -110,44 +111,82 @@ export default function TorneoDetailPage() {
         >
           <h1 className="text-2xl font-bold mb-2">{torneo.nombre}</h1>
 
-          <p className="text-sm opacity-70">
-            {torneo.fecha} • {torneo.lugar}
-          </p>
+          <div className="flex justify-between items-start gap-6 mt-3 flex-wrap">
+            {/* IZQUIERDA */}
+            <div className="flex flex-col gap-2">
+              <div className="text-sm opacity-70 flex flex-col">
+                <span>📅 {torneo.fecha}</span>
 
-          <div className="flex gap-2 mt-3">
-            <span
-              className="inline-block px-3 py-1 text-xs rounded"
-              style={{
-                background:
-                  torneo.estado === "abierto"
-                    ? "var(--color-primary)"
-                    : torneo.estado === "en juego"
-                      ? "var(--color-accent)"
-                      : "var(--color-border)",
+                <span>📍 {torneo.lugar}</span>
+              </div>
 
-                color: torneo.estado === "finalizado" ? "#fff" : "#000",
-              }}
-            >
-              {torneo.estado.toUpperCase()}
-            </span>
+              <div className="flex gap-2 flex-wrap">
+                <span
+                  className="inline-block px-3 py-1 text-xs rounded"
+                  style={{
+                    background:
+                      torneo.estado === "abierto"
+                        ? "var(--color-primary)"
+                        : torneo.estado === "en juego"
+                          ? "var(--color-accent)"
+                          : "var(--color-border)",
 
-            <span
-              className="inline-block px-3 py-1 text-xs rounded"
-              style={{
-                background: "var(--color-surface-2)",
-              }}
-            >
-              {(torneo.genero ?? "masculino").toUpperCase()}
-            </span>
+                    color: torneo.estado === "finalizado" ? "#fff" : "#000",
+                  }}
+                >
+                  {torneo.estado.toUpperCase()}
+                </span>
 
-            <span
-              className="inline-block px-3 py-1 text-xs rounded"
-              style={{
-                background: "var(--color-surface-2)",
-              }}
-            >
-              {torneo.categoria.toUpperCase()}
-            </span>
+                <span
+                  className="inline-block px-3 py-1 text-xs rounded"
+                  style={{
+                    background: "var(--color-surface-2)",
+                  }}
+                >
+                  {(torneo.genero ?? "masculino").toUpperCase()}
+                </span>
+
+                <span
+                  className="inline-block px-3 py-1 text-xs rounded"
+                  style={{
+                    background: "var(--color-surface-2)",
+                  }}
+                >
+                  {torneo.categoria.toUpperCase()}
+                </span>
+              </div>
+            </div>
+
+            {/* DERECHA */}
+            <div className="flex gap-4 flex-wrap">
+              <div
+                className="px-4 py-2 rounded-lg"
+                style={{
+                  background: "var(--color-primary)",
+
+                  color: "#000",
+                }}
+              >
+                <div className="text-xs font-semibold">INSCRIPCIÓN</div>
+
+                <div className="text-lg font-bold">
+                  ${torneo.precioInscripcion}
+                </div>
+              </div>
+
+              <div
+                className="px-4 py-2 rounded-lg"
+                style={{
+                  background: "var(--color-surface-2)",
+                }}
+              >
+                <div className="text-xs font-semibold">CUPOS</div>
+
+                <div className="text-lg font-bold">
+                  {torneo.inscriptos}/{torneo.cupoMaximo}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -175,6 +214,69 @@ export default function TorneoDetailPage() {
                 }}
               >
                 Soy organizador
+              </button>
+            </div>
+            <div className="mt-4 flex gap-2 flex-wrap">
+              <button
+                onClick={() => {
+                  updateTournamentStatus(torneo.id, "abierto");
+
+                  window.location.reload();
+                }}
+                className="px-3 py-2 rounded-md text-sm font-semibold"
+                style={{
+                  background: "var(--color-primary)",
+
+                  color: "#000",
+                }}
+              >
+                Abrir torneo
+              </button>
+
+              <button
+                onClick={() => {
+                  updateTournamentStatus(torneo.id, "cerrado");
+
+                  window.location.reload();
+                }}
+                className="px-3 py-2 rounded-md text-sm font-semibold"
+                style={{
+                  background: "var(--color-surface-2)",
+                }}
+              >
+                Cerrar torneo
+              </button>
+
+              <button
+                onClick={() => {
+                  updateTournamentStatus(torneo.id, "en juego");
+
+                  window.location.reload();
+                }}
+                className="px-3 py-2 rounded-md text-sm font-semibold"
+                style={{
+                  background: "var(--color-accent)",
+
+                  color: "#000",
+                }}
+              >
+                En juego
+              </button>
+
+              <button
+                onClick={() => {
+                  updateTournamentStatus(torneo.id, "finalizado");
+
+                  window.location.reload();
+                }}
+                className="px-3 py-2 rounded-md text-sm font-semibold"
+                style={{
+                  background: "#ff4d4d",
+
+                  color: "#fff",
+                }}
+              >
+                Finalizar
               </button>
             </div>
           </div>
