@@ -13,14 +13,19 @@ import {
 
 import { generarZonas } from "../modules/torneos/torneo.utils";
 
-import { validatePair, validateOrganizerCode } from "../modules/torneos/rules";
+import {
+  isOrganizer,
+  validatePair,
+  validateOrganizerCode,
+  logoutOrganizer,
+} from "../modules/torneos/rules";
 
 export default function TorneoDetailPage() {
   const torneos = getTournaments();
 
   const jugadoresFederados = getPlayers();
 
-  const [organizerMode, setOrganizerMode] = useState(false);
+  const organizerMode = isOrganizer();
 
   const [codigo, setCodigo] = useState("");
 
@@ -83,7 +88,7 @@ export default function TorneoDetailPage() {
     window.location.reload();
   };
 
-  const handleIngresarComoOrganizador = () => {
+  const handleLoginOrganizer = () => {
     const valid = validateOrganizerCode(codigo);
 
     if (!valid) {
@@ -92,9 +97,9 @@ export default function TorneoDetailPage() {
       return;
     }
 
-    setOrganizerMode(true);
-
     alert("Modo organizador activado");
+
+    window.location.reload();
   };
 
   return (
@@ -190,7 +195,7 @@ export default function TorneoDetailPage() {
           </div>
         </div>
 
-        {/* ACCESO ORGANIZADOR */}
+        {/* LOGIN ORGANIZADOR */}
         {!organizerMode && (
           <div className="card">
             <h3 className="card-title">Acceso organizador</h3>
@@ -205,7 +210,7 @@ export default function TorneoDetailPage() {
               />
 
               <button
-                onClick={handleIngresarComoOrganizador}
+                onClick={handleLoginOrganizer}
                 className="px-4 py-2 rounded-md font-semibold"
                 style={{
                   background: "var(--color-primary)",
@@ -216,7 +221,63 @@ export default function TorneoDetailPage() {
                 Soy organizador
               </button>
             </div>
-            <div className="mt-4 flex gap-2 flex-wrap">
+          </div>
+        )}
+
+        {/* PANEL ORGANIZADOR */}
+        {organizerMode && (
+          <div className="card flex flex-col gap-4">
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <h3 className="card-title">Panel organizador</h3>
+
+              <button
+                onClick={() => {
+                  logoutOrganizer();
+
+                  window.location.reload();
+                }}
+                className="px-3 py-1 rounded-md text-sm font-semibold"
+                style={{
+                  background: "#ff4d4d",
+
+                  color: "#fff",
+                }}
+              >
+                Cerrar modo organizador
+              </button>
+            </div>
+
+            {/* AGREGAR PAREJA */}
+            <div className="flex gap-2 flex-wrap">
+              <input
+                value={dni1}
+                onChange={(e) => setDni1(e.target.value)}
+                placeholder="DNI jugador 1"
+                className="input"
+              />
+
+              <input
+                value={dni2}
+                onChange={(e) => setDni2(e.target.value)}
+                placeholder="DNI jugador 2"
+                className="input"
+              />
+
+              <button
+                onClick={handleAgregarPareja}
+                className="px-4 py-2 rounded-md font-semibold"
+                style={{
+                  background: "var(--color-primary)",
+
+                  color: "#000",
+                }}
+              >
+                Agregar
+              </button>
+            </div>
+
+            {/* ESTADOS */}
+            <div className="flex gap-2 flex-wrap">
               <button
                 onClick={() => {
                   updateTournamentStatus(torneo.id, "abierto");
@@ -277,41 +338,6 @@ export default function TorneoDetailPage() {
                 }}
               >
                 Finalizar
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ORGANIZADOR */}
-        {organizerMode && (
-          <div className="card">
-            <h3 className="card-title">Panel organizador</h3>
-
-            <div className="flex gap-2">
-              <input
-                value={dni1}
-                onChange={(e) => setDni1(e.target.value)}
-                placeholder="DNI jugador 1"
-                className="input"
-              />
-
-              <input
-                value={dni2}
-                onChange={(e) => setDni2(e.target.value)}
-                placeholder="DNI jugador 2"
-                className="input"
-              />
-
-              <button
-                onClick={handleAgregarPareja}
-                className="px-4 py-2 rounded-md font-semibold"
-                style={{
-                  background: "var(--color-primary)",
-
-                  color: "#000",
-                }}
-              >
-                Agregar
               </button>
             </div>
           </div>
