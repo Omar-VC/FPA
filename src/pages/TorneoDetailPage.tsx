@@ -175,6 +175,16 @@ export default function TorneoDetailPage() {
                 >
                   {torneo.categoria.toUpperCase()}
                 </span>
+                <span
+                  className="inline-block px-3 py-1 text-xs rounded"
+                  style={{
+                    background: "var(--color-surface-2)",
+                  }}
+                >
+                  {torneo.tipoFormato === "zonas-playoff"
+                    ? "ZONAS + PLAYOFF"
+                    : "ELIMINACIÓN DIRECTA"}
+                </span>
               </div>
             </div>
 
@@ -205,6 +215,22 @@ export default function TorneoDetailPage() {
 
                 <div className="text-lg font-bold">
                   {torneo.inscriptos}/{torneo.cupoMaximo}
+                </div>
+
+                <div
+                  className="text-xs mt-1 font-semibold"
+                  style={{
+                    color:
+                      torneo.inscriptos >= torneo.cupoMaximo
+                        ? "#ff4d4d"
+                        : "var(--color-primary)",
+                  }}
+                >
+                  {torneo.inscriptos >= torneo.cupoMaximo
+                    ? "COMPLETO"
+                    : `${
+                        torneo.cupoMaximo - torneo.inscriptos
+                      } lugares disponibles`}
                 </div>
               </div>
             </div>

@@ -18,6 +18,9 @@ export default function CrearTorneoPage() {
   const [genero, setGenero] = useState<"masculino" | "femenino" | "mixto">(
     "masculino",
   );
+  const [tipoFormato, setTipoFormato] = useState<
+    "eliminacion-directa" | "zonas-playoff"
+  >("eliminacion-directa");
   const [cupoMaximo, setCupoMaximo] = useState(16);
 
   const [precioInscripcion, setPrecioInscripcion] = useState(0);
@@ -75,6 +78,7 @@ export default function CrearTorneoPage() {
       lugar,
       categoria,
       genero,
+      tipoFormato,
       puntos: {
         campeon: puntosCampeon,
         finalista: puntosFinalista,
@@ -194,6 +198,18 @@ export default function CrearTorneoPage() {
                   <option value="femenino">Femenino</option>
 
                   <option value="mixto">Mixto</option>
+                </select>
+                <select
+                  value={tipoFormato}
+                  onChange={(e) =>
+                    setTipoFormato(
+                      e.target.value as "eliminacion-directa" | "zonas-playoff"
+                    )
+                  }
+                  className="input"
+                >
+                  <option value="eliminacion-directa">Eliminación Directa</option>
+                  <option value="zonas-playoff">Zonas Play-Off</option>
                 </select>
                 <input
                   type="number"

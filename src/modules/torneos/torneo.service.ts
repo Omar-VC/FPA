@@ -17,6 +17,8 @@ type CreateTournamentInput = {
   | "femenino"
   | "mixto";
 
+  tipoFormato: "eliminacion-directa" | "zonas-playoff";
+
   cupoMaximo: number;
 
   precioInscripcion: number;
@@ -42,6 +44,7 @@ export function createTournamentService(data: CreateTournamentInput) {
 
     categoria: data.categoria,
     genero: data.genero,
+    tipoFormato: data.tipoFormato,
     cupoMaximo: data.cupoMaximo,
     precioInscripcion: data.precioInscripcion,
     telefonoOrganizador: data.telefonoOrganizador,

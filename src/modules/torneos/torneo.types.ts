@@ -1,8 +1,5 @@
-export type EstadoTorneo = "abierto" |"cerrado"| "en juego" | "finalizado";
-export type GeneroTorneo =
-  | "masculino"
-  | "femenino"
-  | "mixto";
+export type EstadoTorneo = "abierto" | "cerrado" | "en juego" | "finalizado";
+export type GeneroTorneo = "masculino" | "femenino" | "mixto";
 export interface Pareja {
   dni1: string;
   dni2: string;
@@ -25,6 +22,9 @@ export interface Torneo {
 
   categoria: "iniciado" | "intermedio" | "avanzado";
   genero: GeneroTorneo;
+
+  tipoFormato: "eliminacion-directa" | "zonas-playoff";
+
   cupoMaximo: number;
   precioInscripcion: number;
   telefonoOrganizador: string;

@@ -4,7 +4,6 @@ import { TrophyIcon } from "@heroicons/react/24/solid";
 import { getTournaments } from "../services/api";
 
 export default function TorneosPage() {
-  
   const torneos = getTournaments();
 
   return (
@@ -83,6 +82,13 @@ export default function TorneosPage() {
 
                   <span>
                     Modalidad: {(t.genero ?? "masculino").toUpperCase()}
+                  </span>
+
+                  <span>
+                    Formato:{" "}
+                    {t.tipoFormato === "zonas-playoff"
+                      ? "Zonas + Playoff"
+                      : "Eliminación Directa"}
                   </span>
 
                   <span>

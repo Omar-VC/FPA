@@ -158,6 +158,10 @@ export function addPairToTournament(
     torneo.estado = "cerrado";
   }
 
+  if (torneo.inscriptos >= torneo.cupoMaximo) {
+    torneo.estado = "cerrado";
+  }
+
   saveTournaments(torneos);
 }
 
