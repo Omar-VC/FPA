@@ -25,6 +25,10 @@ export interface Torneo {
 
   tipoFormato: "eliminacion-directa" | "zonas-playoff";
 
+  tamanoZona: 3 | 4 | "automatico";
+
+  clasificanPorZona: number;
+
   cupoMaximo: number;
   precioInscripcion: number;
   telefonoOrganizador: string;

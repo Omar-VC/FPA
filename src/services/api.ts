@@ -107,6 +107,11 @@ export function createTournament(
 
     genero: data.genero,
 
+    tipoFormato: data.tipoFormato,
+
+    tamanoZona: data.tamanoZona,
+    clasificanPorZona: data.clasificanPorZona,
+
     cupoMaximo: data.cupoMaximo,
 
     precioInscripcion: data.precioInscripcion,

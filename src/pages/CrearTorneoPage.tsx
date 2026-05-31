@@ -21,6 +21,10 @@ export default function CrearTorneoPage() {
   const [tipoFormato, setTipoFormato] = useState<
     "eliminacion-directa" | "zonas-playoff"
   >("eliminacion-directa");
+  const [tamanoZona, setTamanoZona] = useState<3 | 4 | "automatico">(
+    "automatico",
+  );
+  const [clasificanPorZona, setClasificanPorZona] = useState(2);
   const [cupoMaximo, setCupoMaximo] = useState(16);
 
   const [precioInscripcion, setPrecioInscripcion] = useState(0);
@@ -79,6 +83,8 @@ export default function CrearTorneoPage() {
       categoria,
       genero,
       tipoFormato,
+      tamanoZona,
+      clasificanPorZona,
       puntos: {
         campeon: puntosCampeon,
         finalista: puntosFinalista,
@@ -203,14 +209,59 @@ export default function CrearTorneoPage() {
                   value={tipoFormato}
                   onChange={(e) =>
                     setTipoFormato(
-                      e.target.value as "eliminacion-directa" | "zonas-playoff"
+                      e.target.value as "eliminacion-directa" | "zonas-playoff",
                     )
                   }
                   className="input"
                 >
-                  <option value="eliminacion-directa">Eliminación Directa</option>
+                  <option value="eliminacion-directa">
+                    Eliminación Directa
+                  </option>
                   <option value="zonas-playoff">Zonas Play-Off</option>
                 </select>
+
+                {tipoFormato === "zonas-playoff" && (
+                  <div className="flex flex-col gap-3 mt-3">
+                    {/* Tamaño de zona */}
+                    <div>
+                      <label className="text-sm">Tamaño de zona</label>
+
+                      <select
+                        value={tamanoZona}
+                        onChange={(e) =>
+                          setTamanoZona(
+                            e.target.value === "automatico"
+                              ? "automatico"
+                              : (Number(e.target.value) as 3 | 4),
+                          )
+                        }
+                        className="input"
+                      >
+                        <option value="automatico">Automático</option>
+
+                        <option value="3">3 parejas</option>
+
+                        <option value="4">4 parejas</option>
+                      </select>
+                    </div>
+                    {/* Clasifican por zona */}
+                    <div>
+                      <label className="text-sm">Clasifican por zona</label>
+
+                      <select
+                        value={clasificanPorZona}
+                        onChange={(e) =>
+                          setClasificanPorZona(Number(e.target.value))
+                        }
+                        className="input"
+                      >
+                        <option value="1">1 pareja</option>
+
+                        <option value="2">2 parejas</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
                 <input
                   type="number"
                   value={cupoMaximo}

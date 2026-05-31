@@ -19,6 +19,10 @@ type CreateTournamentInput = {
 
   tipoFormato: "eliminacion-directa" | "zonas-playoff";
 
+  tamanoZona: 3 | 4 | "automatico";
+
+  clasificanPorZona: number;
+
   cupoMaximo: number;
 
   precioInscripcion: number;
@@ -45,6 +49,8 @@ export function createTournamentService(data: CreateTournamentInput) {
     categoria: data.categoria,
     genero: data.genero,
     tipoFormato: data.tipoFormato,
+    tamanoZona: data.tamanoZona,
+    clasificanPorZona: data.clasificanPorZona,
     cupoMaximo: data.cupoMaximo,
     precioInscripcion: data.precioInscripcion,
     telefonoOrganizador: data.telefonoOrganizador,
