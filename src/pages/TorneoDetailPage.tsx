@@ -11,21 +11,16 @@ import {
   updateTournamentStatus,
 } from "../services/api";
 
-import { generarZonas } from "../modules/torneos/torneo.utils";
-
-import {
-  isOrganizer,
-  validatePair,
-  validateOrganizerCode,
-  logoutOrganizer,
-} from "../modules/torneos/rules";
+import { validatePair, validateOrganizerCode } from "../modules/torneos/rules";
 
 export default function TorneoDetailPage() {
-  const torneos = getTournaments();
+  const torneosIniciales = getTournaments();
 
   const jugadoresFederados = getPlayers();
 
-  const organizerMode = isOrganizer();
+  const [organizerMode, setOrganizerMode] = useState(
+    localStorage.getItem("organizerMode") === "true",
+  );
 
   const [codigo, setCodigo] = useState("");
 
@@ -37,9 +32,13 @@ export default function TorneoDetailPage() {
     id: string;
   }>();
 
-  const torneo = torneos.find((t) => t.id === id);
+  const torneoInicial = torneosIniciales.find((t) => t.id === id);
 
-  if (!torneo) {
+  const [torneoState, setTorneoState] = useState(torneoInicial);
+
+  const torneo = torneoState!;
+
+  if (!torneoState) {
     return (
       <PublicLayout>
         <div className="text-center py-10">
@@ -56,8 +55,6 @@ export default function TorneoDetailPage() {
     );
   }
 
-  const zonas = generarZonas(torneo.parejas);
-
   const buscarJugador = (dni: string) =>
     jugadoresFederados.find((j) => j.dni === dni);
 
@@ -68,22 +65,22 @@ export default function TorneoDetailPage() {
 
   const handleAgregarPareja = () => {
     if (
-      torneo.estado === "cerrado" ||
-      torneo.estado === "en juego" ||
-      torneo.estado === "finalizado"
+      torneoState?.estado === "cerrado" ||
+      torneoState?.estado === "en juego" ||
+      torneoState?.estado === "finalizado"
     ) {
       alert("El torneo no acepta más inscripciones");
 
       return;
     }
 
-    if (torneo.inscriptos >= torneo.cupoMaximo) {
+    if (torneoState!.inscriptos >= torneoState!.cupoMaximo) {
       alert("No hay más cupos disponibles");
 
       return;
     }
 
-    const validation = validatePair(torneo, dni1, dni2);
+    const validation = validatePair(torneoState!, dni1, dni2);
 
     if (!validation.valid) {
       alert(validation.reason);
@@ -91,17 +88,19 @@ export default function TorneoDetailPage() {
       return;
     }
 
-    addPairToTournament(torneo.id, {
+    addPairToTournament(torneoState!.id, {
       dni1,
       dni2,
+    });
+
+    setTorneoState({
+      ...torneoState!,
     });
 
     alert("Pareja agregada");
 
     setDni1("");
     setDni2("");
-
-    window.location.reload();
   };
 
   const handleLoginOrganizer = () => {
@@ -109,13 +108,14 @@ export default function TorneoDetailPage() {
 
     if (!valid) {
       alert("Código inválido");
-
       return;
     }
 
-    alert("Modo organizador activado");
+    setOrganizerMode(true);
 
-    window.location.reload();
+    localStorage.setItem("organizerMode", "true");
+
+    alert("Modo organizador activado");
   };
 
   return (
@@ -274,9 +274,8 @@ export default function TorneoDetailPage() {
 
               <button
                 onClick={() => {
-                  logoutOrganizer();
-
-                  window.location.reload();
+                  setOrganizerMode(false);
+                  localStorage.removeItem("organizerMode");
                 }}
                 className="px-3 py-1 rounded-md text-sm font-semibold"
                 style={{
@@ -330,7 +329,14 @@ export default function TorneoDetailPage() {
                 onClick={() => {
                   updateTournamentStatus(torneo.id, "abierto");
 
-                  window.location.reload();
+                  setTorneoState((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          estado: "abierto",
+                        }
+                      : prev,
+                  );
                 }}
                 className="px-3 py-2 rounded-md text-sm font-semibold"
                 style={{
@@ -346,7 +352,14 @@ export default function TorneoDetailPage() {
                 onClick={() => {
                   updateTournamentStatus(torneo.id, "cerrado");
 
-                  window.location.reload();
+                  setTorneoState((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          estado: "cerrado",
+                        }
+                      : prev,
+                  );
                 }}
                 className="px-3 py-2 rounded-md text-sm font-semibold"
                 style={{
@@ -360,7 +373,14 @@ export default function TorneoDetailPage() {
                 onClick={() => {
                   updateTournamentStatus(torneo.id, "en juego");
 
-                  window.location.reload();
+                  setTorneoState((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          estado: "en juego",
+                        }
+                      : prev,
+                  );
                 }}
                 className="px-3 py-2 rounded-md text-sm font-semibold"
                 style={{
@@ -376,7 +396,14 @@ export default function TorneoDetailPage() {
                 onClick={() => {
                   updateTournamentStatus(torneo.id, "finalizado");
 
-                  window.location.reload();
+                  setTorneoState((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          estado: "finalizado",
+                        }
+                      : prev,
+                  );
                 }}
                 className="px-3 py-2 rounded-md text-sm font-semibold"
                 style={{
@@ -486,7 +513,9 @@ export default function TorneoDetailPage() {
                         onClick={() => {
                           removePairFromTournament(torneo.id, p.dni1, p.dni2);
 
-                          window.location.reload();
+                          setTorneoState({
+                            ...torneo,
+                          });
                         }}
                         className="px-3 py-1 rounded-md text-sm font-semibold"
                         style={{
@@ -504,43 +533,6 @@ export default function TorneoDetailPage() {
             </div>
           )}
         </div>
-
-        {/* ZONAS */}
-        {torneo.parejas.length >= 20 && (
-          <div className="card">
-            <h3 className="card-title">Zonas</h3>
-
-            {zonas.map((zona) => (
-              <div key={zona.nombre} className="mb-4">
-                <h4 className="font-semibold mb-2">{zona.nombre}</h4>
-
-                <div className="flex flex-col gap-2">
-                  {zona.parejas.map((p, idx) => {
-                    const j1 = buscarJugador(p.dni1);
-
-                    const j2 = buscarJugador(p.dni2);
-
-                    return (
-                      <div
-                        key={`${p.dni1}-${p.dni2}`}
-                        className="px-3 py-2 rounded-md flex justify-between"
-                        style={{
-                          background: "var(--color-surface-2)",
-                        }}
-                      >
-                        <span>Pareja {idx + 1}</span>
-
-                        <span>
-                          {j1?.nombre ?? p.dni1} & {j2?.nombre ?? p.dni2}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* CTA */}
         <a
