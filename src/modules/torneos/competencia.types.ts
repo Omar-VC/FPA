@@ -1,4 +1,4 @@
-import type { Pareja } from "../torneo.types";
+import type { Pareja } from "./torneo.types";
 
 export interface Partido {
   id: string;

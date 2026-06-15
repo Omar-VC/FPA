@@ -1,7 +1,7 @@
-import type { Pareja } from "../torneo.types";
+import type { Pareja } from "./torneo.types";
 
 import { generarZonas } from "./zonas.generator";
-import { generarPlayoff } from "./playoff.generator";
+//import { generarPlayoff } from "./playoff.generator";
 
 export function generarCompetencia(input: {
   parejas: Pareja[];
@@ -19,11 +19,13 @@ export function generarCompetencia(input: {
     return {
       zonas,
       playoff: [],
+      formato: input.tipoFormato,
     };
   }
 
   return {
     zonas: [],
     playoff: [],
+    formato: input.tipoFormato,
   };
 }

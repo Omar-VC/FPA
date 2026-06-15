@@ -1,3 +1,5 @@
+import type { Competencia } from "./competencia.types";
+
 export type EstadoTorneo = "abierto" | "cerrado" | "en juego" | "finalizado";
 export type GeneroTorneo = "masculino" | "femenino" | "mixto";
 export interface Pareja {
@@ -11,6 +13,7 @@ export interface PuntosTorneo {
   semifinal: number;
   cuartos: number;
 }
+
 
 export interface Torneo {
   id: string;
@@ -37,4 +40,6 @@ export interface Torneo {
   parejas: Pareja[];
 
   puntos: PuntosTorneo;
+
+  competencia?: Competencia;
 }

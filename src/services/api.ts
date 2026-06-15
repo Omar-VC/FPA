@@ -3,6 +3,8 @@ import type { Torneo } from "../modules/torneos/torneo.types";
 import { jugadoresMock } from "../modules/jugadores/jugador.mock";
 import type { Jugador } from "../modules/jugadores/jugador.types";
 
+import type { Competencia } from "../modules/torneos/competencia.types";
+
 /**
  * =========================
  * LOCAL STORAGE KEYS
@@ -217,6 +219,22 @@ export function updateTournamentStatus(
 
 export function deleteTournament(id: string) {
   torneos = torneos.filter((t) => t.id !== id);
+
+  saveTournaments(torneos);
+}
+
+
+/** SAVE TOURNAMENTS COMPETITION */
+
+export function saveTournamentCompetition(
+  torneoId: string,
+  competencia: Competencia,
+) {
+  const torneo = torneos.find((t) => t.id === torneoId);
+
+  if (!torneo) return;
+
+  torneo.competencia = competencia;
 
   saveTournaments(torneos);
 }

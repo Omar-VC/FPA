@@ -12,6 +12,8 @@ import {
 } from "../services/api";
 
 import { validatePair, validateOrganizerCode } from "../modules/torneos/rules";
+import { generarCompetencia } from "../modules/torneos/competencia.generator";
+import { saveTournamentCompetition } from "../services/api";
 
 export default function TorneoDetailPage() {
   const torneosIniciales = getTournaments();
@@ -58,11 +60,12 @@ export default function TorneoDetailPage() {
   const buscarJugador = (dni: string) =>
     jugadoresFederados.find((j) => j.dni === dni);
 
-  const rankingParcial = torneo.parejas
+  const rankingParcial = torneoState!.parejas
     .flatMap((p) => [buscarJugador(p.dni1), buscarJugador(p.dni2)])
     .filter((j): j is NonNullable<typeof j> => Boolean(j))
     .sort((a, b) => b.puntos - a.puntos);
 
+  
   const handleAgregarPareja = () => {
     if (
       torneoState?.estado === "cerrado" ||
@@ -88,19 +91,56 @@ export default function TorneoDetailPage() {
       return;
     }
 
+    {
+      /* AGREGAR PAREJA*/
+    }
+
     addPairToTournament(torneoState!.id, {
       dni1,
       dni2,
     });
 
-    setTorneoState({
-      ...torneoState!,
-    });
+    const torneoActualizado = getTournaments().find(
+      (t) => t.id === torneoState!.id,
+    );
+
+    if (torneoActualizado) {
+      setTorneoState({
+        ...torneoActualizado,
+      });
+    }
 
     alert("Pareja agregada");
 
     setDni1("");
     setDni2("");
+  };
+
+  {
+    /* GENERAR COMPETENCIA*/
+  }
+
+  const handleGenerarCompetencia = () => {
+    const competencia = generarCompetencia({
+      parejas: torneoState!.parejas,
+      tipoFormato: torneoState!.tipoFormato,
+      tamanoZona: torneoState!.tamanoZona,
+      clasificanPorZona: torneoState!.clasificanPorZona,
+    });
+
+    saveTournamentCompetition(torneoState!.id, competencia);
+
+    const torneoActualizado = getTournaments().find(
+      (t) => t.id === torneoState!.id,
+    );
+
+    if (torneoActualizado) {
+      setTorneoState({
+        ...torneoActualizado,
+      });
+    }
+
+    alert("Competencia generada");
   };
 
   const handleLoginOrganizer = () => {
@@ -307,10 +347,10 @@ export default function TorneoDetailPage() {
               <button
                 onClick={handleAgregarPareja}
                 disabled={
-                  torneo.estado === "cerrado" ||
-                  torneo.estado === "en juego" ||
-                  torneo.estado === "finalizado" ||
-                  torneo.inscriptos >= torneo.cupoMaximo
+                  torneoState?.estado === "cerrado" ||
+                  torneoState?.estado === "en juego" ||
+                  torneoState?.estado === "finalizado" ||
+                  torneoState!.inscriptos >= torneoState!.cupoMaximo
                 }
                 className="px-4 py-2 rounded-md font-semibold disabled:opacity-50"
                 style={{
@@ -414,6 +454,16 @@ export default function TorneoDetailPage() {
               >
                 Finalizar
               </button>
+              <button
+                onClick={handleGenerarCompetencia}
+                className="px-3 py-2 rounded-md text-sm font-semibold"
+                style={{
+                  background: "var(--color-primary)",
+                  color: "#000",
+                }}
+              >
+                Generar competencia
+              </button>
             </div>
           </div>
         )}
@@ -513,9 +563,15 @@ export default function TorneoDetailPage() {
                         onClick={() => {
                           removePairFromTournament(torneo.id, p.dni1, p.dni2);
 
-                          setTorneoState({
-                            ...torneo,
-                          });
+                          const torneoActualizado = getTournaments().find(
+                            (t) => t.id === torneo.id,
+                          );
+
+                          if (torneoActualizado) {
+                            setTorneoState({
+                              ...torneoActualizado,
+                            });
+                          }
                         }}
                         className="px-3 py-1 rounded-md text-sm font-semibold"
                         style={{

@@ -113,6 +113,20 @@ export function validatePair(torneo: Torneo, dni1: string, dni2: string) {
     };
   }
 
+  //jugador inscripto
+
+  const jugadorYaInscripto = torneo.parejas.some(
+    (p) =>
+      p.dni1 === dni1 || p.dni2 === dni1 || p.dni1 === dni2 || p.dni2 === dni2,
+  );
+
+  if (jugadorYaInscripto) {
+    return {
+      valid: false,
+      reason: "Uno de los jugadores ya está inscripto en el torneo",
+    };
+  }
+
   // torneo lleno
   if (torneo.inscriptos >= torneo.cupoMaximo) {
     return {
