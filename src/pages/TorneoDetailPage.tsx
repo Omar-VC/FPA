@@ -16,8 +16,6 @@ import { generarCompetencia } from "../modules/torneos/competencia.generator";
 import { saveTournamentCompetition } from "../services/api";
 
 export default function TorneoDetailPage() {
-  const torneosIniciales = getTournaments();
-
   const jugadoresFederados = getPlayers();
 
   const [organizerMode, setOrganizerMode] = useState(
@@ -34,11 +32,21 @@ export default function TorneoDetailPage() {
     id: string;
   }>();
 
-  const torneoInicial = torneosIniciales.find((t) => t.id === id);
+  const torneoInicial = getTournaments().find((t) => t.id === id);
 
   const [torneoState, setTorneoState] = useState(torneoInicial);
 
   const torneo = torneoState!;
+
+  const refreshTournament = () => {
+    const torneoActualizado = getTournaments().find((t) => t.id === torneo.id);
+
+    if (torneoActualizado) {
+      setTorneoState({
+        ...torneoActualizado,
+      });
+    }
+  };
 
   if (!torneoState) {
     return (
@@ -60,12 +68,11 @@ export default function TorneoDetailPage() {
   const buscarJugador = (dni: string) =>
     jugadoresFederados.find((j) => j.dni === dni);
 
-  const rankingParcial = torneoState!.parejas
+  const rankingParcial = torneo.parejas
     .flatMap((p) => [buscarJugador(p.dni1), buscarJugador(p.dni2)])
     .filter((j): j is NonNullable<typeof j> => Boolean(j))
     .sort((a, b) => b.puntos - a.puntos);
 
-  
   const handleAgregarPareja = () => {
     if (
       torneoState?.estado === "cerrado" ||
@@ -77,13 +84,13 @@ export default function TorneoDetailPage() {
       return;
     }
 
-    if (torneoState!.inscriptos >= torneoState!.cupoMaximo) {
+    if (torneo.inscriptos >= torneo.cupoMaximo) {
       alert("No hay más cupos disponibles");
 
       return;
     }
 
-    const validation = validatePair(torneoState!, dni1, dni2);
+    const validation = validatePair(torneo, dni1, dni2);
 
     if (!validation.valid) {
       alert(validation.reason);
@@ -95,20 +102,12 @@ export default function TorneoDetailPage() {
       /* AGREGAR PAREJA*/
     }
 
-    addPairToTournament(torneoState!.id, {
+    addPairToTournament(torneo.id, {
       dni1,
       dni2,
     });
 
-    const torneoActualizado = getTournaments().find(
-      (t) => t.id === torneoState!.id,
-    );
-
-    if (torneoActualizado) {
-      setTorneoState({
-        ...torneoActualizado,
-      });
-    }
+    refreshTournament();
 
     alert("Pareja agregada");
 
@@ -122,23 +121,15 @@ export default function TorneoDetailPage() {
 
   const handleGenerarCompetencia = () => {
     const competencia = generarCompetencia({
-      parejas: torneoState!.parejas,
-      tipoFormato: torneoState!.tipoFormato,
-      tamanoZona: torneoState!.tamanoZona,
-      clasificanPorZona: torneoState!.clasificanPorZona,
+      parejas: torneo.parejas,
+      tipoFormato: torneo.tipoFormato,
+      tamanoZona: torneo.tamanoZona,
+      clasificanPorZona: torneo.clasificanPorZona,
     });
 
-    saveTournamentCompetition(torneoState!.id, competencia);
+    saveTournamentCompetition(torneo.id, competencia);
 
-    const torneoActualizado = getTournaments().find(
-      (t) => t.id === torneoState!.id,
-    );
-
-    if (torneoActualizado) {
-      setTorneoState({
-        ...torneoActualizado,
-      });
-    }
+    refreshTournament();
 
     alert("Competencia generada");
   };
@@ -347,10 +338,10 @@ export default function TorneoDetailPage() {
               <button
                 onClick={handleAgregarPareja}
                 disabled={
-                  torneoState?.estado === "cerrado" ||
-                  torneoState?.estado === "en juego" ||
-                  torneoState?.estado === "finalizado" ||
-                  torneoState!.inscriptos >= torneoState!.cupoMaximo
+                  torneo.estado === "cerrado" ||
+                  torneo.estado === "en juego" ||
+                  torneo.estado === "finalizado" ||
+                  torneo.inscriptos >= torneo.cupoMaximo
                 }
                 className="px-4 py-2 rounded-md font-semibold disabled:opacity-50"
                 style={{
@@ -563,15 +554,7 @@ export default function TorneoDetailPage() {
                         onClick={() => {
                           removePairFromTournament(torneo.id, p.dni1, p.dni2);
 
-                          const torneoActualizado = getTournaments().find(
-                            (t) => t.id === torneo.id,
-                          );
-
-                          if (torneoActualizado) {
-                            setTorneoState({
-                              ...torneoActualizado,
-                            });
-                          }
+                          refreshTournament();
                         }}
                         className="px-3 py-1 rounded-md text-sm font-semibold"
                         style={{
