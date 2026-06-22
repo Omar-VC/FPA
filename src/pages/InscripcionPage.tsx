@@ -180,16 +180,25 @@ function Select({ label, options, ...props }: any) {
   return (
     <div className="flex flex-col gap-1">
       <label className="text-sm text-[var(--color-text-muted)]">{label}</label>
+
       <select
         {...props}
-        className="px-3 py-2 rounded-md bg-transparent border"
+        className="px-3 py-2 rounded-md border"
         style={{
           borderColor: "var(--color-border)",
+          backgroundColor: "var(--color-surface-2)",
           color: "var(--color-text)",
         }}
       >
         {options.map((op: string) => (
-          <option key={op} value={op}>
+          <option
+            key={op}
+            value={op}
+            style={{
+              backgroundColor: "var(--color-surface)",
+              color: "var(--color-text)",
+            }}
+          >
             {op}
           </option>
         ))}

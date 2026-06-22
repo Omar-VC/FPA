@@ -6,11 +6,17 @@ export interface Partido {
   pareja1: Pareja;
   pareja2: Pareja;
 
-  resultado?: {
-    sets: string;
-  };
+  resultado?: ResultadoPartido;
+  ganador?: "pareja1" | "pareja2";
 
   estado: "pendiente" | "jugado";
+}
+
+export interface ResultadoPartido {
+  sets: {
+    pareja1: number;
+    pareja2: number;
+  }[];
 }
 
 export interface Zona {
@@ -25,4 +31,6 @@ export interface Competencia {
   playoff?: Partido[];
 
   formato: "eliminacion-directa" | "zonas-playoff";
+
+  formatoPartido?: "1-set" | "3-sets";
 }

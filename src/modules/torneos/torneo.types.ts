@@ -42,4 +42,5 @@ export interface Torneo {
   puntos: PuntosTorneo;
 
   competencia?: Competencia;
+  formatoPartido: "1-set" | "3-sets";
 }

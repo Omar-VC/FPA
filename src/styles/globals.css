@@ -39,9 +39,6 @@ button {
   transition: all 0.2s ease;
 }
 
-input, select, textarea {
-  outline: none;
-}
 
 .card {
   background: var(--color-surface);
@@ -55,10 +52,34 @@ input, select, textarea {
   margin-bottom: 0.75rem;
 }
 
-.input {
+input,
+select,
+textarea {
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
   border: 1px solid var(--color-border);
-  background: transparent;
+  background: var(--color-surface-2);
   color: var(--color-text);
+  outline: none;
+  font-family: var(--font-main);
+}
+
+/* placeholder */
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* IMPORTANTÍSIMO: esto fuerza dark en select */
+select {
+  background-color: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+/* focus */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(63, 175, 133, 0.2);
 }

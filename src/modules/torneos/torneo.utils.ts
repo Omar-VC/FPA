@@ -22,7 +22,7 @@ export function crearTorneo(
 
     estado: "abierto",
 
-    categoria: "libre",
+    categoria: "intermedio",
     cupoMaximo: 16,
     inscriptos: 0,
 

@@ -8,6 +8,7 @@ export function generarCompetencia(input: {
   tipoFormato: "eliminacion-directa" | "zonas-playoff";
   tamanoZona: 3 | 4 | "automatico";
   clasificanPorZona: number;
+  formatoPartido: "1-set" | "3-sets";
 }) {
   if (input.tipoFormato === "zonas-playoff") {
     const zonas = generarZonas(
@@ -20,6 +21,7 @@ export function generarCompetencia(input: {
       zonas,
       playoff: [],
       formato: input.tipoFormato,
+      formatoPartido: input.formatoPartido,
     };
   }
 
@@ -27,5 +29,6 @@ export function generarCompetencia(input: {
     zonas: [],
     playoff: [],
     formato: input.tipoFormato,
+    formatoPartido: input.formatoPartido,
   };
 }
