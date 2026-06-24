@@ -38,6 +38,7 @@ export default function CrearTorneoPage() {
   const [dni1, setDni1] = useState("");
   const [dni2, setDni2] = useState("");
   const [parejas, setParejas] = useState<{ dni1: string; dni2: string }[]>([]);
+  const [cantidadSets, setCantidadSets] = useState<1 | 3 | 5>(1);
 
   // TEMPORAL (después lo movemos a service)
   const handleValidarCodigo = () => {
@@ -95,6 +96,7 @@ export default function CrearTorneoPage() {
       cupoMaximo,
       precioInscripcion,
       telefonoOrganizador,
+      cantidadSets,
     });
 
     alert("Torneo creado");
@@ -190,6 +192,8 @@ export default function CrearTorneoPage() {
 
                   <option value="avanzado">Avanzado</option>
                 </select>
+
+                {/* Genero */}
                 <select
                   value={genero}
                   onChange={(e) =>
@@ -205,20 +209,47 @@ export default function CrearTorneoPage() {
 
                   <option value="mixto">Mixto</option>
                 </select>
-                <select
-                  value={tipoFormato}
-                  onChange={(e) =>
-                    setTipoFormato(
-                      e.target.value as "eliminacion-directa" | "zonas-playoff",
-                    )
-                  }
-                  className="input"
-                >
-                  <option value="eliminacion-directa">
-                    Eliminación Directa
-                  </option>
-                  <option value="zonas-playoff">Zonas Play-Off</option>
-                </select>
+    
+                      {/* Formato del partido */}
+                <div>
+                  <label className="text-sm">Formato de partido</label>
+
+                  <select
+                    value={cantidadSets}
+                    onChange={(e) =>
+                      setCantidadSets(Number(e.target.value) as 1 | 3 | 5)
+                    }
+                    className="input"
+                  >
+                    <option value={1}>1 Set</option>
+                    <option value={3}>Mejor de 3 Sets</option>
+                    <option value={5}>Mejor de 5 Sets</option>
+                  </select>
+                </div>
+
+                {/* Formato del Torneo */}
+
+                <div>
+                  <label className="text-sm">Formato del torneo</label>
+
+                  <select
+                    value={tipoFormato}
+                    onChange={(e) =>
+                      setTipoFormato(
+                        e.target.value as
+                          | "eliminacion-directa"
+                          | "zonas-playoff",
+                      )
+                    }
+                    className="input"
+                  >
+                    <option value="eliminacion-directa">
+                      Eliminación Directa
+                    </option>
+
+                    <option value="zonas-playoff">Zonas Play-Off</option>
+                  </select>
+                </div>
 
                 {tipoFormato === "zonas-playoff" && (
                   <div className="flex flex-col gap-3 mt-3">

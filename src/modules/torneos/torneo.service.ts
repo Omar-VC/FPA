@@ -31,6 +31,7 @@ type CreateTournamentInput = {
 
   puntos: Torneo["puntos"];
   parejas: { dni1: string; dni2: string }[];
+  cantidadSets: 1 | 3 | 5;
 };
 
 // ==========================
@@ -54,6 +55,7 @@ export function createTournamentService(data: CreateTournamentInput) {
     cupoMaximo: data.cupoMaximo,
     precioInscripcion: data.precioInscripcion,
     telefonoOrganizador: data.telefonoOrganizador,
+    cantidadSets: data.cantidadSets,
   });
 }
 // ==========================
