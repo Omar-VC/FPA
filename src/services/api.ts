@@ -4,6 +4,7 @@ import { jugadoresMock } from "../modules/jugadores/jugador.mock";
 import type { Jugador } from "../modules/jugadores/jugador.types";
 
 import type { Competencia } from "../modules/torneos/competencia.types";
+import { generarCompetencia } from "../modules/torneos/competencia.generator";
 
 /**
  * =========================
@@ -104,29 +105,29 @@ export function createTournament(
     nombre: data.nombre,
     fecha: data.fecha,
     lugar: data.lugar,
-
     categoria: data.categoria,
-
     genero: data.genero,
-
     tipoFormato: data.tipoFormato,
-
     tamanoZona: data.tamanoZona,
     clasificanPorZona: data.clasificanPorZona,
-
     cupoMaximo: data.cupoMaximo,
-
     precioInscripcion: data.precioInscripcion,
-
     telefonoOrganizador: data.telefonoOrganizador,
-
     parejas: data.parejas,
-
     puntos: data.puntos,
+    cantidadSets: data.cantidadSets,
+
+    // 🔥 acá generás la competencia
+    competencia: generarCompetencia({
+      parejas: data.parejas,
+      tipoFormato: data.tipoFormato,
+      tamanoZona: data.tamanoZona,
+      clasificanPorZona: data.clasificanPorZona,
+      cantidadSets: data.cantidadSets,
+    }),
   };
 
   torneos.push(newTournament);
-
   saveTournaments(torneos);
 
   return newTournament;
@@ -222,7 +223,6 @@ export function deleteTournament(id: string) {
 
   saveTournaments(torneos);
 }
-
 
 /** SAVE TOURNAMENTS COMPETITION */
 
