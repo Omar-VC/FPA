@@ -1,5 +1,6 @@
 import type { Competencia } from "./competencia.types";
 
+
 export type EstadoTorneo = "abierto" | "cerrado" | "en juego" | "finalizado";
 export type GeneroTorneo = "masculino" | "femenino" | "mixto";
 export interface Pareja {

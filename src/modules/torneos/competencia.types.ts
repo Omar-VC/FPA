@@ -32,5 +32,5 @@ export interface Competencia {
 
   formato: "eliminacion-directa" | "zonas-playoff";
 
-  formatoPartido?: "1-set" | "3-sets";
+  cantidadSets: 1 | 3 | 5;
 }

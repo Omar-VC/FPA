@@ -5,6 +5,7 @@ export function generarZonas(
   parejas: Pareja[],
   tamanoZona: 3 | 4 | "automatico",
   _clasifican: number,
+  cantidadSets: 1 | 3 | 5,
 ): Zona[] {
   const parejasMezcladas = [...parejas].sort(() => Math.random() - 0.5);
 
@@ -29,13 +30,15 @@ export function generarZonas(
 
   // 🔥 generar partidos por zona
   zonas.forEach((zona) => {
-    zona.partidos = generarPartidosZona(zona.parejas);
+    zona.partidos = generarPartidosZona(zona.parejas, cantidadSets);
+
+
   });
 
   return zonas;
 }
 
-function generarPartidosZona(parejas: Pareja[]): Partido[] {
+function generarPartidosZona(parejas: Pareja[], cantidadSets: 1 | 3 | 5): Partido[] {
   const partidos: Partido[] = [];
 
   for (let i = 0; i < parejas.length; i++) {
@@ -45,9 +48,17 @@ function generarPartidosZona(parejas: Pareja[]): Partido[] {
         pareja1: parejas[i],
         pareja2: parejas[j],
         estado: "pendiente",
+        resultado: {
+          sets: Array.from({ length: cantidadSets }).map(() => ({
+            pareja1: 0,
+            pareja2: 0,
+          })),
+        },
       });
     }
   }
 
   return partidos;
 }
+
+

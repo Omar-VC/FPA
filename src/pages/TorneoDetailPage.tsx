@@ -134,7 +134,7 @@ export default function TorneoDetailPage() {
       tipoFormato: torneo.tipoFormato,
       tamanoZona: torneo.tamanoZona,
       clasificanPorZona: torneo.clasificanPorZona,
-      formatoPartido: torneo.formatoPartido
+      cantidadSets: torneo.cantidadSets  
     });
 
     saveTournamentCompetition(torneo.id, competencia);
@@ -623,8 +623,8 @@ export default function TorneoDetailPage() {
                       const j2a = buscarJugador(p.pareja2.dni1);
                       const j2b = buscarJugador(p.pareja2.dni2);
 
-                      const cantidadSets =
-                        torneo.competencia?.formatoPartido === "3-sets" ? 3 : 1;
+                      const cantidadSets = torneo.competencia?.cantidadSets ?? 1;
+
 
                       return (
                         <div

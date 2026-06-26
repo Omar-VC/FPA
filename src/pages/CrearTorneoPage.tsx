@@ -4,6 +4,8 @@ import { createTournamentService } from "../modules/torneos/torneo.service";
 import { validateOrganizerCode } from "../modules/torneos/rules";
 import { validatePair } from "../modules/torneos/rules";
 import { getPlayerNameByDni } from "../modules/jugadores/jugador.utils";
+import { validateTournamentRules } from "../modules/torneos/rules/validateTournamentRules";
+
 
 export default function CrearTorneoPage() {
   const [codigo, setCodigo] = useState("");
@@ -53,10 +55,20 @@ export default function CrearTorneoPage() {
     if (!dni1 || !dni2) return;
 
     const torneoTemporal = {
+      estado: "abierto",
       parejas,
+      cupoMaximo,
       categoria,
       genero,
     };
+    // 1. Validar cupo y estado
+    const rulesValidation = validateTournamentRules(torneoTemporal as any);
+    if (!rulesValidation.valid) {
+      alert(rulesValidation.reason);
+      return;
+    }
+
+     // 2. Validar que no se repitan jugadores
     const validation = validatePair(torneoTemporal as any, dni1, dni2);
 
     if (!validation.valid) {
@@ -209,8 +221,8 @@ export default function CrearTorneoPage() {
 
                   <option value="mixto">Mixto</option>
                 </select>
-    
-                      {/* Formato del partido */}
+
+                {/* Formato del partido */}
                 <div>
                   <label className="text-sm">Formato de partido</label>
 
