@@ -3,13 +3,15 @@ import type { Pareja } from "./torneo.types";
 export interface Partido {
   id: string;
 
-  pareja1: Pareja;
-  pareja2: Pareja;
+  pareja1: Pareja | null;
+  pareja2: Pareja | null;
 
   resultado?: ResultadoPartido;
   ganador?: "pareja1" | "pareja2";
 
-  estado: "pendiente" | "jugado";
+  estado: "pendiente" | "jugado" | "finalizado";
+
+  ronda?: number; // 🔹 útil para playoff
 }
 
 export interface ResultadoPartido {

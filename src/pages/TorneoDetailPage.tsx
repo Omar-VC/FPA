@@ -14,7 +14,10 @@ import {
 import { validatePair, validateOrganizerCode } from "../modules/torneos/rules";
 import { generarCompetencia } from "../modules/torneos/competencia.generator";
 import { saveTournamentCompetition } from "../services/api";
-import { calcularGanador } from "../modules/torneos/competencia.utils";
+import {
+  calcularGanador,
+  avanzarGanador,
+} from "../modules/torneos/competencia.utils";
 
 export default function TorneoDetailPage() {
   const jugadoresFederados = getPlayers();
@@ -617,10 +620,19 @@ export default function TorneoDetailPage() {
                     </div>
 
                     {zona.partidos.map((p) => {
-                      const j1a = buscarJugador(p.pareja1.dni1);
-                      const j1b = buscarJugador(p.pareja1.dni2);
-                      const j2a = buscarJugador(p.pareja2.dni1);
-                      const j2b = buscarJugador(p.pareja2.dni2);
+                      const j1a = p.pareja1
+                        ? buscarJugador(p.pareja1.dni1)
+                        : null;
+                      const j1b = p.pareja1
+                        ? buscarJugador(p.pareja1.dni2)
+                        : null;
+
+                      const j2a = p.pareja2
+                        ? buscarJugador(p.pareja2.dni1)
+                        : null;
+                      const j2b = p.pareja2
+                        ? buscarJugador(p.pareja2.dni2)
+                        : null;
 
                       console.log("Partido:", p);
 
@@ -636,114 +648,232 @@ export default function TorneoDetailPage() {
                           {/* INFO PARTIDO */}
                           <div>
                             <span>
-                              {j1a?.nombre ?? p.pareja1.dni1} &{" "}
-                              {j1b?.nombre ?? p.pareja1.dni2}
+                              {j1a?.nombre ??
+                                (p.pareja1 ? (
+                                  p.pareja1.dni1
+                                ) : (
+                                  <span
+                                    style={{
+                                      color: "gray",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    Por definir
+                                  </span>
+                                ))}{" "}
+                              &{" "}
+                              {j1b?.nombre ??
+                                (p.pareja1 ? (
+                                  p.pareja1.dni2
+                                ) : (
+                                  <span
+                                    style={{
+                                      color: "gray",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    Por definir
+                                  </span>
+                                ))}
                             </span>
 
                             <span style={{ margin: "0 8px" }}>vs</span>
 
                             <span>
-                              {j2a?.nombre ?? p.pareja2.dni1} &{" "}
-                              {j2b?.nombre ?? p.pareja2.dni2}
+                              {j2a?.nombre ??
+                                (p.pareja2 ? (
+                                  p.pareja2.dni1
+                                ) : (
+                                  <span
+                                    style={{
+                                      color: "gray",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    Por definir
+                                  </span>
+                                ))}{" "}
+                              &{" "}
+                              {j2b?.nombre ??
+                                (p.pareja2 ? (
+                                  p.pareja2.dni2
+                                ) : (
+                                  <span
+                                    style={{
+                                      color: "gray",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    Por definir
+                                  </span>
+                                ))}
                             </span>
 
-                            <span style={{ marginLeft: "10px", opacity: 0.6 }}>
+                            <span
+                              style={{
+                                marginLeft: "10px",
+                                opacity: 0.8,
+                                color:
+                                  p.estado === "pendiente"
+                                    ? "gray"
+                                    : p.estado === "jugado"
+                                      ? "blue"
+                                      : "green",
+                              }}
+                            >
                               ({p.estado})
                             </span>
                           </div>
 
                           {/* EDICIÓN ORGANIZADOR */}
-                          {organizerMode && (
-                            <div
-                              style={{
-                                marginTop: "8px",
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "6px",
-                              }}
-                            >
-                              {p.resultado?.sets.map((set, setIndex) => (
-                                <div
-                                  key={setIndex}
+                          {organizerMode &&
+                            p.pareja1 &&
+                            p.pareja2 &&
+                            p.estado !== "finalizado" && (
+                              <div
+                                style={{
+                                  marginTop: "8px",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: "6px",
+                                }}
+                              >
+                                {p.resultado?.sets.map((set, setIndex) => (
+                                  <div
+                                    key={setIndex}
+                                    style={{
+                                      display: "flex",
+                                      gap: "8px",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <input
+                                      type="text"
+                                      inputMode="numeric"
+                                      placeholder="P1"
+                                      value={
+                                        resultados[p.id]?.[setIndex]?.pareja1 ??
+                                        set.pareja1
+                                      }
+                                      onChange={(e) => {
+                                        const val = Number(e.target.value);
+                                        setResultados((prev) => {
+                                          const prevSets = prev[p.id] ?? [
+                                            ...p.resultado!.sets,
+                                          ];
+                                          const updated = [...prevSets];
+                                          updated[setIndex] = {
+                                            pareja1: val,
+                                            pareja2:
+                                              updated[setIndex]?.pareja2 ??
+                                              set.pareja2,
+                                          };
+                                          return { ...prev, [p.id]: updated };
+                                        });
+                                      }}
+                                      style={{ width: 60 }}
+                                    />
+
+                                    <span>-</span>
+
+                                    <input
+                                      type="text"
+                                      inputMode="numeric"
+                                      placeholder="P2"
+                                      value={
+                                        resultados[p.id]?.[setIndex]?.pareja2 ??
+                                        set.pareja2
+                                      }
+                                      onChange={(e) => {
+                                        const val = Number(e.target.value);
+                                        setResultados((prev) => {
+                                          const prevSets = prev[p.id] ?? [
+                                            ...p.resultado!.sets,
+                                          ];
+                                          const updated = [...prevSets];
+                                          updated[setIndex] = {
+                                            pareja1:
+                                              updated[setIndex]?.pareja1 ??
+                                              set.pareja1,
+                                            pareja2: val,
+                                          };
+                                          return { ...prev, [p.id]: updated };
+                                        });
+                                      }}
+                                      style={{ width: 60 }}
+                                    />
+                                  </div>
+                                ))}
+
+                                {/* BOTÓN GUARDAR */}
+                                <button
+                                  onClick={() => {
+                                    const sets = resultados[p.id] ?? [];
+                                    const ganador = calcularGanador({
+                                      ...p,
+                                      resultado: { sets },
+                                    });
+
+                                    const updated = {
+                                      ...torneoState,
+                                      competencia: {
+                                        ...torneoState.competencia!,
+                                        zonas:
+                                          torneoState.competencia!.zonas!.map(
+                                            (z) => ({
+                                              ...z,
+                                              partidos: z.partidos.map(
+                                                (partido) =>
+                                                  partido.id === p.id
+                                                    ? {
+                                                        ...partido,
+                                                        resultado: { sets },
+                                                        estado:
+                                                          "jugado" as const,
+                                                        ganador:
+                                                          ganador ?? undefined,
+                                                      }
+                                                    : partido,
+                                              ),
+                                            }),
+                                          ),
+                                      },
+                                    };
+
+                                    setTorneoState(updated);
+                                  }}
                                   style={{
-                                    display: "flex",
-                                    gap: "8px",
-                                    alignItems: "center",
+                                    marginTop: "6px",
+                                    padding: "6px 10px",
+                                    background: "var(--color-primary)",
+                                    border: "none",
+                                    borderRadius: "6px",
+                                    fontWeight: 600,
                                   }}
                                 >
-                                  <input
-                                    type="text"
-                                    inputMode="numeric"
-                                    placeholder="P1"
-                                    value={
-                                      resultados[p.id]?.[setIndex]?.pareja1 ??
-                                      set.pareja1
-                                    }
-                                    onChange={(e) => {
-                                      const val = Number(e.target.value);
-                                      setResultados((prev) => {
-                                        const prevSets = prev[p.id] ?? [
-                                          ...p.resultado!.sets,
-                                        ];
-                                        const updated = [...prevSets];
-                                        updated[setIndex] = {
-                                          pareja1: val,
-                                          pareja2:
-                                            updated[setIndex]?.pareja2 ??
-                                            set.pareja2,
-                                        };
-                                        return { ...prev, [p.id]: updated };
-                                      });
-                                    }}
-                                    style={{ width: 60 }}
-                                  />
+                                  Guardar resultado
+                                </button>
 
-                                  <span>-</span>
+                                {/* BOTÓN CERRAR */}
+                                <button
+                                  onClick={() => {
+                                    const sets = resultados[p.id] ?? [];
+                                    const ganador = calcularGanador({
+                                      ...p,
+                                      resultado: { sets },
+                                    });
+                                    if (!ganador) return;
 
-                                  <input
-                                    type="text"
-                                    inputMode="numeric"
-                                    placeholder="P2"
-                                    value={
-                                      resultados[p.id]?.[setIndex]?.pareja2 ??
-                                      set.pareja2
-                                    }
-                                    onChange={(e) => {
-                                      const val = Number(e.target.value);
-                                      setResultados((prev) => {
-                                        const prevSets = prev[p.id] ?? [
-                                          ...p.resultado!.sets,
-                                        ];
-                                        const updated = [...prevSets];
-                                        updated[setIndex] = {
-                                          pareja1:
-                                            updated[setIndex]?.pareja1 ??
-                                            set.pareja1,
-                                          pareja2: val,
-                                        };
-                                        return { ...prev, [p.id]: updated };
-                                      });
-                                    }}
-                                    style={{ width: 60 }}
-                                  />
-                                </div>
-                              ))}
-
-                              {/* BOTÓN GUARDAR */}
-                              <button
-                                onClick={() => {
-                                  const sets = resultados[p.id] ?? [];
-                                  const ganador = calcularGanador({
-                                    ...p,
-                                    resultado: { sets },
-                                  });
-
-                                  const updated = {
-                                    ...torneoState,
-                                    competencia: {
-                                      ...torneoState.competencia!,
-                                      zonas:
-                                        torneoState.competencia!.zonas!.map(
+                                    const updated = avanzarGanador(
+                                      torneoState,
+                                      p.id,
+                                      ganador,
+                                    );
+                                    setTorneoState({
+                                      ...updated,
+                                      competencia: {
+                                        ...updated.competencia!,
+                                        zonas: updated.competencia!.zonas!.map(
                                           (z) => ({
                                             ...z,
                                             partidos: z.partidos.map(
@@ -751,33 +881,29 @@ export default function TorneoDetailPage() {
                                                 partido.id === p.id
                                                   ? {
                                                       ...partido,
-                                                      resultado: { sets },
-                                                      estado: "jugado" as const,
-                                                      ganador:
-                                                        ganador ?? undefined,
+                                                      estado:
+                                                        "finalizado" as const,
                                                     }
                                                   : partido,
                                             ),
                                           }),
                                         ),
-                                    },
-                                  };
-
-                                  setTorneoState(updated);
-                                }}
-                                style={{
-                                  marginTop: "6px",
-                                  padding: "6px 10px",
-                                  background: "var(--color-primary)",
-                                  border: "none",
-                                  borderRadius: "6px",
-                                  fontWeight: 600,
-                                }}
-                              >
-                                Guardar resultado
-                              </button>
-                            </div>
-                          )}
+                                      },
+                                    });
+                                  }}
+                                  style={{
+                                    marginTop: "6px",
+                                    padding: "6px 10px",
+                                    background: "var(--color-secondary)",
+                                    border: "none",
+                                    borderRadius: "6px",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  Cerrar partido
+                                </button>
+                              </div>
+                            )}
                         </div>
                       );
                     })}
@@ -794,10 +920,20 @@ export default function TorneoDetailPage() {
                   >
                     <h4 className="font-semibold mb-2">Playoff</h4>
                     {torneo.competencia.playoff.map((p) => {
-                      const j1a = buscarJugador(p.pareja1.dni1);
-                      const j1b = buscarJugador(p.pareja1.dni2);
-                      const j2a = buscarJugador(p.pareja2.dni1);
-                      const j2b = buscarJugador(p.pareja2.dni2);
+                      const j1a = p.pareja1
+                        ? buscarJugador(p.pareja1.dni1)
+                        : null;
+                      const j1b = p.pareja1
+                        ? buscarJugador(p.pareja1.dni2)
+                        : null;
+                      const j2a = p.pareja2
+                        ? buscarJugador(p.pareja2.dni1)
+                        : null;
+                      const j2b = p.pareja2
+                        ? buscarJugador(p.pareja2.dni2)
+                        : null;
+
+                         console.log("Playoff partidos:", torneo.competencia?.playoff);
 
                       return (
                         <div
@@ -811,15 +947,79 @@ export default function TorneoDetailPage() {
                           {/* INFO PARTIDO */}
                           <div>
                             <span>
-                              {j1a?.nombre ?? p.pareja1.dni1} &{" "}
-                              {j1b?.nombre ?? p.pareja1.dni2}
+                              {j1a?.nombre ??
+                                (p.pareja1 ? (
+                                  p.pareja1.dni1
+                                ) : (
+                                  <span
+                                    style={{
+                                      color: "gray",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    Por definir
+                                  </span>
+                                ))}{" "}
+                              &{" "}
+                              {j1b?.nombre ??
+                                (p.pareja1 ? (
+                                  p.pareja1.dni2
+                                ) : (
+                                  <span
+                                    style={{
+                                      color: "gray",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    Por definir
+                                  </span>
+                                ))}
                             </span>
+
                             <span style={{ margin: "0 8px" }}>vs</span>
+
                             <span>
-                              {j2a?.nombre ?? p.pareja2.dni1} &{" "}
-                              {j2b?.nombre ?? p.pareja2.dni2}
+                              {j2a?.nombre ??
+                                (p.pareja2 ? (
+                                  p.pareja2.dni1
+                                ) : (
+                                  <span
+                                    style={{
+                                      color: "gray",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    Por definir
+                                  </span>
+                                ))}{" "}
+                              &{" "}
+                              {j2b?.nombre ??
+                                (p.pareja2 ? (
+                                  p.pareja2.dni2
+                                ) : (
+                                  <span
+                                    style={{
+                                      color: "gray",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    Por definir
+                                  </span>
+                                ))}
                             </span>
-                            <span style={{ marginLeft: "10px", opacity: 0.6 }}>
+
+                            <span
+                              style={{
+                                marginLeft: "10px",
+                                opacity: 0.8,
+                                color:
+                                  p.estado === "pendiente"
+                                    ? "gray"
+                                    : p.estado === "jugado"
+                                      ? "blue"
+                                      : "green",
+                              }}
+                            >
                               ({p.estado})
                             </span>
                           </div>
@@ -835,125 +1035,175 @@ export default function TorneoDetailPage() {
                             </div>
                           )}
 
-                          {organizerMode && (
-                            <div
-                              style={{
-                                marginTop: "8px",
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "6px",
-                              }}
-                            >
-                              {p.resultado?.sets.map((set, setIndex) => (
-                                <div
-                                  key={setIndex}
-                                  style={{
-                                    display: "flex",
-                                    gap: "8px",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <input
-                                    type="text"
-                                    inputMode="numeric"
-                                    placeholder="P1"
-                                    value={
-                                      resultados[p.id]?.[setIndex]?.pareja1 ??
-                                      set.pareja1
-                                    }
-                                    onChange={(e) => {
-                                      const val = Number(e.target.value);
-                                      setResultados((prev) => {
-                                        const prevSets = prev[p.id] ?? [
-                                          ...p.resultado!.sets,
-                                        ];
-                                        const updated = [...prevSets];
-                                        updated[setIndex] = {
-                                          pareja1: val,
-                                          pareja2:
-                                            updated[setIndex]?.pareja2 ??
-                                            set.pareja2,
-                                        };
-                                        return { ...prev, [p.id]: updated };
-                                      });
-                                    }}
-                                    style={{ width: 60 }}
-                                  />
-                                  <span>-</span>
-                                  <input
-                                    type="text"
-                                    inputMode="numeric"
-                                    placeholder="P2"
-                                    value={
-                                      resultados[p.id]?.[setIndex]?.pareja2 ??
-                                      set.pareja2
-                                    }
-                                    onChange={(e) => {
-                                      const val = Number(e.target.value);
-                                      setResultados((prev) => {
-                                        const prevSets = prev[p.id] ?? [
-                                          ...p.resultado!.sets,
-                                        ];
-                                        const updated = [...prevSets];
-                                        updated[setIndex] = {
-                                          pareja1:
-                                            updated[setIndex]?.pareja1 ??
-                                            set.pareja1,
-                                          pareja2: val,
-                                        };
-                                        return { ...prev, [p.id]: updated };
-                                      });
-                                    }}
-                                    style={{ width: 60 }}
-                                  />
-                                </div>
-                              ))}
-
-                              {/* BOTÓN GUARDAR */}
-                              <button
-                                onClick={() => {
-                                  if (!torneoState.competencia?.playoff) return;
-
-                                  const sets = resultados[p.id] ?? [];
-                                  const ganador = calcularGanador({
-                                    ...p,
-                                    resultado: { sets },
-                                  });
-
-                                  const updated = {
-                                    ...torneoState,
-                                    competencia: {
-                                      ...torneoState.competencia,
-                                      playoff:
-                                        torneoState.competencia.playoff.map(
-                                          (partido) =>
-                                            partido.id === p.id
-                                              ? {
-                                                  ...partido,
-                                                  resultado: { sets },
-                                                  estado: "jugado" as const,
-                                                  ganador: ganador ?? undefined,
-                                                }
-                                              : partido,
-                                        ),
-                                    },
-                                  };
-
-                                  setTorneoState(updated);
-                                }}
+                          {organizerMode &&
+                            p.pareja1 &&
+                            p.pareja2 &&
+                            p.estado !== "finalizado" && (
+                              <div
                                 style={{
-                                  marginTop: "6px",
-                                  padding: "6px 10px",
-                                  background: "var(--color-primary)",
-                                  border: "none",
-                                  borderRadius: "6px",
-                                  fontWeight: 600,
+                                  marginTop: "8px",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: "6px",
                                 }}
                               >
-                                Guardar resultado
-                              </button>
-                            </div>
-                          )}
+                                {p.resultado?.sets.map((set, setIndex) => (
+                                  <div
+                                    key={setIndex}
+                                    style={{
+                                      display: "flex",
+                                      gap: "8px",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <input
+                                      type="text"
+                                      inputMode="numeric"
+                                      placeholder="P1"
+                                      value={
+                                        resultados[p.id]?.[setIndex]?.pareja1 ??
+                                        set.pareja1
+                                      }
+                                      onChange={(e) => {
+                                        const val = Number(e.target.value);
+                                        setResultados((prev) => {
+                                          const prevSets = prev[p.id] ?? [
+                                            ...p.resultado!.sets,
+                                          ];
+                                          const updated = [...prevSets];
+                                          updated[setIndex] = {
+                                            pareja1: val,
+                                            pareja2:
+                                              updated[setIndex]?.pareja2 ??
+                                              set.pareja2,
+                                          };
+                                          return { ...prev, [p.id]: updated };
+                                        });
+                                      }}
+                                      style={{ width: 60 }}
+                                    />
+                                    <span>-</span>
+                                    <input
+                                      type="text"
+                                      inputMode="numeric"
+                                      placeholder="P2"
+                                      value={
+                                        resultados[p.id]?.[setIndex]?.pareja2 ??
+                                        set.pareja2
+                                      }
+                                      onChange={(e) => {
+                                        const val = Number(e.target.value);
+                                        setResultados((prev) => {
+                                          const prevSets = prev[p.id] ?? [
+                                            ...p.resultado!.sets,
+                                          ];
+                                          const updated = [...prevSets];
+                                          updated[setIndex] = {
+                                            pareja1:
+                                              updated[setIndex]?.pareja1 ??
+                                              set.pareja1,
+                                            pareja2: val,
+                                          };
+                                          return { ...prev, [p.id]: updated };
+                                        });
+                                      }}
+                                      style={{ width: 60 }}
+                                    />
+                                  </div>
+                                ))}
+
+                                {/* BOTÓN GUARDAR */}
+                                <button
+                                  onClick={() => {
+                                    if (!torneoState.competencia?.playoff)
+                                      return;
+
+                                    const sets = resultados[p.id] ?? [];
+                                    const ganador = calcularGanador({
+                                      ...p,
+                                      resultado: { sets },
+                                    });
+
+                                    const updated = {
+                                      ...torneoState,
+                                      competencia: {
+                                        ...torneoState.competencia,
+                                        playoff:
+                                          torneoState.competencia.playoff.map(
+                                            (partido) =>
+                                              partido.id === p.id
+                                                ? {
+                                                    ...partido,
+                                                    resultado: { sets },
+                                                    estado: "jugado" as const,
+                                                    ganador:
+                                                      ganador ?? undefined,
+                                                  }
+                                                : partido,
+                                          ),
+                                      },
+                                    };
+
+                                    setTorneoState(updated);
+                                  }}
+                                  style={{
+                                    marginTop: "6px",
+                                    padding: "6px 10px",
+                                    background: "var(--color-primary)",
+                                    border: "none",
+                                    borderRadius: "6px",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  Guardar resultado
+                                </button>
+
+                                {/* BOTÓN CERRAR */}
+                                <button
+                                  onClick={() => {
+                                    const sets = resultados[p.id] ?? [];
+                                    const ganador = calcularGanador({
+                                      ...p,
+                                      resultado: { sets },
+                                    });
+                                    if (!ganador) return;
+
+                                    const updated = avanzarGanador(
+                                      torneoState,
+                                      p.id,
+                                      ganador,
+                                    );
+                                    setTorneoState({
+                                      ...updated,
+                                      competencia: {
+                                        ...updated.competencia!,
+                                        playoff:
+                                          updated.competencia!.playoff!.map(
+                                            (partido) =>
+                                              partido.id === p.id
+                                                ? {
+                                                    ...partido,
+                                                    estado:
+                                                      "finalizado" as const,
+                                                  }
+                                                : partido,
+                                          ),
+                                      },
+                                    });
+                                  }}
+                                  style={{
+                                    marginTop: "6px",
+                                    padding: "6px 10px",
+                                    background: "var(--color-secondary)",
+                                    border: "none",
+                                    borderRadius: "6px",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  Cerrar partido
+                                </button>
+                              </div>
+                            )}
                         </div>
                       );
                     })}
