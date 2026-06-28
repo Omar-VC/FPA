@@ -19,6 +19,7 @@ import {
   avanzarGanador,
 } from "../modules/torneos/competencia.utils";
 import TournamentHeader from "../components/torneos/TournamentHeader";
+import OrganizerLogin from "../components/torneos/OrganizerLogin";
 
 export default function TorneoDetailPage() {
   const jugadoresFederados = getPlayers();
@@ -49,8 +50,6 @@ export default function TorneoDetailPage() {
   const [torneoState, setTorneoState] = useState(torneoInicial);
 
   const torneo = torneoState!;
-
-  
 
   const refreshTournament = () => {
     const torneoActualizado = getTournaments().find((t) => t.id === torneo.id);
@@ -171,33 +170,12 @@ export default function TorneoDetailPage() {
         <TournamentHeader torneo={torneo} />
 
         {/* LOGIN ORGANIZADOR */}
-        {!organizerMode && (
-          <div className="card">
-            <h3 className="card-title">Acceso organizador</h3>
-
-            <div className="flex gap-2">
-              <input
-                type="password"
-                value={codigo}
-                onChange={(e) => setCodigo(e.target.value)}
-                placeholder="Ingresar código"
-                className="input"
-              />
-
-              <button
-                onClick={handleLoginOrganizer}
-                className="px-4 py-2 rounded-md font-semibold"
-                style={{
-                  background: "var(--color-primary)",
-
-                  color: "#000",
-                }}
-              >
-                Soy organizador
-              </button>
-            </div>
-          </div>
-        )}
+        <OrganizerLogin
+          organizerMode={organizerMode}
+          codigo={codigo}
+          setCodigo={setCodigo}
+          handleLoginOrganizer={handleLoginOrganizer}
+        />
 
         {/* PANEL ORGANIZADOR */}
         {organizerMode && (
@@ -809,7 +787,7 @@ export default function TorneoDetailPage() {
                     style={{ background: "var(--color-surface-2)" }}
                   >
                     <h4 className="font-semibold mb-2">Playoff</h4>
-                    
+
                     {torneo.competencia.playoff.map((p) => {
                       const j1a = p.pareja1
                         ? buscarJugador(p.pareja1.dni1)
@@ -824,7 +802,10 @@ export default function TorneoDetailPage() {
                         ? buscarJugador(p.pareja2.dni2)
                         : null;
 
-                         console.log("Playoff partidos:", torneo.competencia?.playoff);
+                      console.log(
+                        "Playoff partidos:",
+                        torneo.competencia?.playoff,
+                      );
 
                       return (
                         <div
