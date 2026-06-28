@@ -22,6 +22,7 @@ import TournamentHeader from "../components/torneos/TournamentHeader";
 import OrganizerLogin from "../components/torneos/OrganizerLogin";
 import TournamentRanking from "../components/torneos/TournamentRanking";
 import TournamentPairs from "../components/torneos/TournamentPairs";
+import OrganizerPanel from "../components/torneos/OrganizerPanel";
 
 export default function TorneoDetailPage() {
   const jugadoresFederados = getPlayers();
@@ -62,6 +63,14 @@ export default function TorneoDetailPage() {
       });
     }
   };
+
+  const handleChangeEstado = (
+  estado: "abierto" | "cerrado" | "en juego" | "finalizado"
+) => {
+  setTorneoState((prev) =>
+    prev ? { ...prev, estado } : prev
+  );
+};
 
   if (!torneoState) {
     return (
@@ -181,164 +190,18 @@ export default function TorneoDetailPage() {
 
         {/* PANEL ORGANIZADOR */}
         {organizerMode && (
-          <div className="card flex flex-col gap-4">
-            <div className="flex justify-between items-center flex-wrap gap-2">
-              <h3 className="card-title">Panel organizador</h3>
-
-              <button
-                onClick={() => {
-                  setOrganizerMode(false);
-                  localStorage.removeItem("organizerMode");
-                }}
-                className="px-3 py-1 rounded-md text-sm font-semibold"
-                style={{
-                  background: "#ff4d4d",
-
-                  color: "#fff",
-                }}
-              >
-                Cerrar modo organizador
-              </button>
-            </div>
-
-            {/* AGREGAR PAREJA */}
-            <div className="flex gap-2 flex-wrap">
-              <input
-                value={dni1}
-                onChange={(e) => setDni1(e.target.value)}
-                placeholder="DNI jugador 1"
-                className="input"
-              />
-
-              <input
-                value={dni2}
-                onChange={(e) => setDni2(e.target.value)}
-                placeholder="DNI jugador 2"
-                className="input"
-              />
-
-              <button
-                onClick={handleAgregarPareja}
-                disabled={
-                  torneo.estado === "cerrado" ||
-                  torneo.estado === "en juego" ||
-                  torneo.estado === "finalizado" ||
-                  torneo.inscriptos >= torneo.cupoMaximo
-                }
-                className="px-4 py-2 rounded-md font-semibold disabled:opacity-50"
-                style={{
-                  background: "var(--color-primary)",
-
-                  color: "#000",
-                }}
-              >
-                Agregar
-              </button>
-            </div>
-
-            {/* ESTADOS */}
-            <div className="flex gap-2 flex-wrap">
-              <button
-                onClick={() => {
-                  updateTournamentStatus(torneo.id, "abierto");
-
-                  setTorneoState((prev) =>
-                    prev
-                      ? {
-                          ...prev,
-                          estado: "abierto",
-                        }
-                      : prev,
-                  );
-                }}
-                className="px-3 py-2 rounded-md text-sm font-semibold"
-                style={{
-                  background: "var(--color-primary)",
-
-                  color: "#000",
-                }}
-              >
-                Abrir torneo
-              </button>
-
-              <button
-                onClick={() => {
-                  updateTournamentStatus(torneo.id, "cerrado");
-
-                  setTorneoState((prev) =>
-                    prev
-                      ? {
-                          ...prev,
-                          estado: "cerrado",
-                        }
-                      : prev,
-                  );
-                }}
-                className="px-3 py-2 rounded-md text-sm font-semibold"
-                style={{
-                  background: "var(--color-surface-2)",
-                }}
-              >
-                Cerrar torneo
-              </button>
-
-              <button
-                onClick={() => {
-                  updateTournamentStatus(torneo.id, "en juego");
-
-                  setTorneoState((prev) =>
-                    prev
-                      ? {
-                          ...prev,
-                          estado: "en juego",
-                        }
-                      : prev,
-                  );
-                }}
-                className="px-3 py-2 rounded-md text-sm font-semibold"
-                style={{
-                  background: "var(--color-accent)",
-
-                  color: "#000",
-                }}
-              >
-                En juego
-              </button>
-
-              <button
-                onClick={() => {
-                  updateTournamentStatus(torneo.id, "finalizado");
-
-                  setTorneoState((prev) =>
-                    prev
-                      ? {
-                          ...prev,
-                          estado: "finalizado",
-                        }
-                      : prev,
-                  );
-                }}
-                className="px-3 py-2 rounded-md text-sm font-semibold"
-                style={{
-                  background: "#ff4d4d",
-
-                  color: "#fff",
-                }}
-              >
-                Finalizar
-              </button>
-              <button
-                onClick={handleGenerarCompetencia}
-                className="px-3 py-2 rounded-md text-sm font-semibold"
-                style={{
-                  background: "var(--color-primary)",
-                  color: "#000",
-                }}
-              >
-                Generar competencia
-              </button>
-            </div>
-          </div>
+        <OrganizerPanel
+          torneo={torneo}
+          dni1={dni1}
+          dni2={dni2}
+          setDni1={setDni1}
+          setDni2={setDni2}
+          handleAgregarPareja={handleAgregarPareja}
+          setOrganizerMode={setOrganizerMode}
+          updateTournamentStatus={updateTournamentStatus}
+          handleGenerarCompetencia={handleGenerarCompetencia}
+          onChangeEstado={handleChangeEstado}
+        />
         )}
 
         {/* PUNTAJE */}
