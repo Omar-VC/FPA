@@ -9,17 +9,30 @@ export interface Partido {
   resultado?: ResultadoPartido;
   ganador?: "pareja1" | "pareja2";
 
-  estado: "pendiente" | "jugado" | "finalizado";
+  estado: EstadoPartido;
 
   ronda?: number; // 🔹 útil para playoff
 }
 
+
+export type EstadoPartido =
+  | "pendiente"
+  | "jugado"
+  | "finalizado";
+
+
+export type SetResultado = {
+  pareja1: number;
+  pareja2: number;
+};
+
+
+
+
 export interface ResultadoPartido {
-  sets: {
-    pareja1: number;
-    pareja2: number;
-  }[];
+  sets: SetResultado[];
 }
+
 
 export interface Zona {
   nombre: string;

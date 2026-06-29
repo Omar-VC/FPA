@@ -9,10 +9,10 @@ export function calcularGanador(
   let puntos1 = 0;
   let puntos2 = 0;
 
-  partido.resultado.sets.forEach((set) => {
+  for (const set of partido.resultado.sets) {
     if (set.pareja1 > set.pareja2) puntos1++;
     else puntos2++;
-  });
+  }
 
   if (puntos1 === puntos2) return null;
 
@@ -22,22 +22,24 @@ export function calcularGanador(
 export function avanzarGanador(
   torneo: Torneo,
   partidoId: string,
-  ganador: "pareja1" | "pareja2"
+  ganador: "pareja1" | "pareja2",
 ): Torneo {
   if (!torneo.competencia?.playoff) return torneo;
 
   const partidoCerrado = torneo.competencia.playoff.find(
-    (p) => p.id === partidoId
+    (p) => p.id === partidoId,
   );
   if (!partidoCerrado) return torneo;
 
   // Obtener la pareja ganadora
   const parejaGanadora =
     ganador === "pareja1" ? partidoCerrado.pareja1 : partidoCerrado.pareja2;
+    if (!parejaGanadora) return torneo;
 
   // Buscar partido de la siguiente ronda
   const siguientePartido = torneo.competencia.playoff.find(
-    (p) => p.ronda === (partidoCerrado.ronda ?? 0) + 1 && (!p.pareja1 || !p.pareja2)
+    (p) =>
+      p.ronda === (partidoCerrado.ronda ?? 0) + 1 && (!p.pareja1 || !p.pareja2),
   );
 
   if (!siguientePartido) return torneo;
@@ -48,9 +50,9 @@ export function avanzarGanador(
       ? {
           ...p,
           pareja1: p.pareja1 ?? parejaGanadora,
-          pareja2: p.pareja1 ? p.pareja2 ?? parejaGanadora : p.pareja2,
+          pareja2: p.pareja1 ? (p.pareja2 ?? parejaGanadora) : p.pareja2,
         }
-      : p
+      : p,
   );
 
   return {
