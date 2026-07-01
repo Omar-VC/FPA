@@ -255,7 +255,6 @@ export default function TorneoDetailPage() {
 
               {/* 🔹 PLAYOFF */}
               <PlayoffSection
-                playoff={torneo.competencia.playoff}
                 organizerMode={organizerMode}
                 buscarJugador={buscarJugador}
                 torneoState={torneoState}

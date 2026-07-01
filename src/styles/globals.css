@@ -83,3 +83,14 @@ textarea:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(63, 175, 133, 0.2);
 }
+
+/* Quitar spinners de inputs number */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}

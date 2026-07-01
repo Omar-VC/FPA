@@ -1,7 +1,7 @@
+import { applyMatchResult } from "../../modules/torneos/applyMatchResult";
+
 type Props = {
   partido: any;
-  resultados: any;
-  setResultados: any;
   calcularGanador: any;
   avanzarGanador: any;
   buscarJugador: (dni: string) => any;
@@ -12,10 +12,6 @@ type Props = {
 
 export default function PartidoItem({
   partido,
-  resultados,
-  setResultados,
-  calcularGanador,
-  avanzarGanador,
   buscarJugador,
   torneoState,
   setTorneoState,
@@ -28,12 +24,6 @@ export default function PartidoItem({
 
   const j2a = p.pareja2 ? buscarJugador(p.pareja2.dni1) : null;
   const j2b = p.pareja2 ? buscarJugador(p.pareja2.dni2) : null;
-
-  const buildMatchResult = (partido: any) => {
-    const sets = resultados[partido.id] ?? partido.resultado?.sets ?? [];
-    const ganador = calcularGanador({ ...partido, resultado: { sets } });
-    return { sets, ganador };
-  };
 
   return (
     <div
@@ -106,22 +96,29 @@ export default function PartidoItem({
               <input
                 type="text"
                 inputMode="numeric"
-                value={resultados[p.id]?.[setIndex]?.pareja1 ?? set.pareja1}
+                value={p.resultado?.sets?.[setIndex]?.pareja1 ?? set.pareja1}
                 onChange={(e) => {
                   const val = Number(e.target.value);
 
-                  setResultados((prev: any) => {
-                    const prevSets = prev[p.id] ?? [
-                      ...(p.resultado?.sets ?? []),
-                    ];
-                    const updated = [...prevSets];
+                  setTorneoState((prev: any) => {
+                    const updatedSets = [...(p.resultado?.sets ?? [])];
 
-                    updated[setIndex] = {
+                    updatedSets[setIndex] = {
                       pareja1: val,
-                      pareja2: updated[setIndex]?.pareja2 ?? set.pareja2,
+                      pareja2: updatedSets[setIndex]?.pareja2 ?? set.pareja2,
                     };
 
-                    return { ...prev, [p.id]: updated };
+                    const newState = structuredClone(prev);
+
+                    const partido = newState.competencia.zonas
+                      .flatMap((z: any) => z.partidos)
+                      .find((partido: any) => partido.id === p.id);
+
+                    if (partido) {
+                      partido.resultado = { sets: updatedSets };
+                    }
+
+                    return newState;
                   });
                 }}
                 style={{ width: 60 }}
@@ -132,22 +129,29 @@ export default function PartidoItem({
               <input
                 type="text"
                 inputMode="numeric"
-                value={resultados[p.id]?.[setIndex]?.pareja2 ?? set.pareja2}
+                value={p.resultado?.sets?.[setIndex]?.pareja2 ?? set.pareja2}
                 onChange={(e) => {
                   const val = Number(e.target.value);
 
-                  setResultados((prev: any) => {
-                    const prevSets = prev[p.id] ?? [
-                      ...(p.resultado?.sets ?? []),
-                    ];
-                    const updated = [...prevSets];
+                  setTorneoState((prev: any) => {
+                    const updatedSets = [...(p.resultado?.sets ?? [])];
 
-                    updated[setIndex] = {
-                      pareja1: updated[setIndex]?.pareja1 ?? set.pareja1,
+                    updatedSets[setIndex] = {
+                      pareja1: updatedSets[setIndex]?.pareja1 ?? set.pareja1,
                       pareja2: val,
                     };
 
-                    return { ...prev, [p.id]: updated };
+                    const newState = structuredClone(prev);
+
+                    const partido = newState.competencia.zonas
+                      .flatMap((z: any) => z.partidos)
+                      .find((partido: any) => partido.id === p.id);
+
+                    if (partido) {
+                      partido.resultado = { sets: updatedSets };
+                    }
+
+                    return newState;
                   });
                 }}
                 style={{ width: 60 }}
@@ -159,64 +163,18 @@ export default function PartidoItem({
           <div style={{ marginTop: "6px", display: "flex", gap: "8px" }}>
             <button
               onClick={() => {
-                const { sets } = buildMatchResult(p);
+                const sets = p.resultado?.sets ?? [];
 
-                setTorneoState((prev: any) => {
-                  if (!prev?.competencia) return prev;
-
-                  return {
-                    ...prev,
-                    competencia: {
-                      ...prev.competencia,
-                      zonas: prev.competencia.zonas.map((z: any) => ({
-                        ...z,
-                        partidos: z.partidos.map((partido: any) =>
-                          partido.id === p.id
-                            ? {
-                                ...partido,
-                                resultado: { sets },
-                                estado: "jugado",
-                              }
-                            : partido,
-                        ),
-                      })),
-                    },
-                  };
+                const updatedTournament = applyMatchResult({
+                  torneo: torneoState,
+                  match: p,
+                  sets,
                 });
+
+                setTorneoState(updatedTournament);
               }}
             >
               Guardar
-            </button>
-
-            <button
-              onClick={() => {
-                const { ganador } = buildMatchResult(p);
-
-                if (!ganador) return;
-
-                const updated = avanzarGanador(torneoState, p.id, ganador);
-
-                setTorneoState((prev: any) => {
-                  if (!prev?.competencia) return prev;
-
-                  return {
-                    ...updated,
-                    competencia: {
-                      ...updated.competencia,
-                      zonas: updated.competencia.zonas.map((z: any) => ({
-                        ...z,
-                        partidos: z.partidos.map((partido: any) =>
-                          partido.id === p.id
-                            ? { ...partido, estado: "finalizado" }
-                            : partido,
-                        ),
-                      })),
-                    },
-                  };
-                });
-              }}
-            >
-              Cerrar
             </button>
           </div>
         </div>

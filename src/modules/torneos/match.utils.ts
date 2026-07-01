@@ -39,13 +39,16 @@ export function updateMatchInTournament(
       zonas: competencia.zonas?.map((zona) => ({
         ...zona,
         partidos: zona.partidos.map((p) =>
-          p.id === matchId ? updatedMatch : p,
+          String(p.id) === String(matchId) ? updatedMatch : p
         ),
       })),
 
-      playoff: competencia.playoff?.map((p) =>
-        p.id === matchId ? updatedMatch : p,
-      ),
+      playoff: competencia.playoff?.map((fase) => ({
+        ...fase,
+        partidos: fase.partidos.map((p) =>
+          String(p.id) === String(matchId) ? updatedMatch : p
+        ),
+      })),
     },
   };
 }

@@ -26,34 +26,51 @@ export function avanzarGanador(
 ): Torneo {
   if (!torneo.competencia?.playoff) return torneo;
 
-  const partidoCerrado = torneo.competencia.playoff.find(
-    (p) => p.id === partidoId,
-  );
+  let partidoCerrado: Partido | undefined;
+  let rondaActual = 0;
+  let indiceActual = 0;
+
+  // Buscar el partido dentro de las fases
+  for (const fase of torneo.competencia.playoff) {
+    const indice = fase.partidos.findIndex((p) => p.id === partidoId);
+
+    if (indice !== -1) {
+      partidoCerrado = fase.partidos[indice];
+      rondaActual = fase.ronda;
+      indiceActual = indice;
+      break;
+    }
+  }
+
   if (!partidoCerrado) return torneo;
 
-  // Obtener la pareja ganadora
   const parejaGanadora =
-    ganador === "pareja1" ? partidoCerrado.pareja1 : partidoCerrado.pareja2;
-    if (!parejaGanadora) return torneo;
+    ganador === "pareja1"
+      ? partidoCerrado.pareja1
+      : partidoCerrado.pareja2;
 
-  // Buscar partido de la siguiente ronda
-  const siguientePartido = torneo.competencia.playoff.find(
-    (p) =>
-      p.ronda === (partidoCerrado.ronda ?? 0) + 1 && (!p.pareja1 || !p.pareja2),
-  );
+  if (!parejaGanadora) return torneo;
 
-  if (!siguientePartido) return torneo;
+  const rondaSiguiente = rondaActual + 1;
 
-  // Insertar ganador en el slot vacío
-  const updatedPlayoff = torneo.competencia.playoff.map((p) =>
-    p.id === siguientePartido.id
-      ? {
-          ...p,
-          pareja1: p.pareja1 ?? parejaGanadora,
-          pareja2: p.pareja1 ? (p.pareja2 ?? parejaGanadora) : p.pareja2,
-        }
-      : p,
-  );
+  const indiceSiguiente = Math.floor(indiceActual / 2);
+
+  const updatedPlayoff = torneo.competencia.playoff.map((fase) => {
+    if (fase.ronda !== rondaSiguiente) return fase;
+
+    return {
+      ...fase,
+      partidos: fase.partidos.map((partido, index) => {
+        if (index !== indiceSiguiente) return partido;
+
+        return {
+          ...partido,
+          pareja1: indiceActual % 2 === 0 ? parejaGanadora : partido.pareja1,
+          pareja2: indiceActual % 2 === 1 ? parejaGanadora : partido.pareja2,
+        };
+      }),
+    };
+  });
 
   return {
     ...torneo,

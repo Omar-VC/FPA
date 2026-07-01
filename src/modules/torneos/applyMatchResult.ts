@@ -5,7 +5,6 @@ import type {
 } from "./competencia.types";
 
 import {
-  updateMatchResult,
   updateMatchInTournament,
 } from "./match.utils";
 
@@ -13,6 +12,10 @@ import {
   calcularGanador,
   avanzarGanador,
 } from "./competencia.utils";
+
+//AQUI ARRIBA VAN LOS IMPORTS
+
+
 
 type ApplyMatchResultParams = {
   torneo: Torneo;
@@ -25,25 +28,33 @@ export function applyMatchResult({
   match,
   sets,
 }: ApplyMatchResultParams): Torneo {
-  const updatedMatch = updateMatchResult(match, sets);
 
-  const ganador = calcularGanador({
+  // 1. actualizar partido con resultado
+  const updatedMatch: Partido = {
     ...match,
     resultado: { sets },
-  });
+    estado: "jugado",
+  };
+  
+  // 2. calcular ganador
+  const ganador = calcularGanador(updatedMatch);
 
   const matchWithWinner: Partido = {
     ...updatedMatch,
     ganador: ganador ?? undefined,
+    estado: ganador ? "finalizado" : "jugado",
   };
 
+
+   // 3. actualizar torneo con partido
   let updatedTournament = updateMatchInTournament(
     torneo,
     match.id,
     matchWithWinner,
   );
 
-  if (ganador && torneo.competencia) {
+  // 4. avanzar si corresponde
+  if (ganador && updatedTournament.competencia) {
     updatedTournament = avanzarGanador(
       updatedTournament,
       match.id,

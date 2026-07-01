@@ -1,5 +1,6 @@
 import type { Pareja } from "./torneo.types";
 
+// PARTIDO
 export interface Partido {
   id: string;
 
@@ -14,12 +15,14 @@ export interface Partido {
   ronda?: number; // 🔹 útil para playoff
 }
 
+// ESTADO DEL PARTIDO
 
 export type EstadoPartido =
   | "pendiente"
   | "jugado"
   | "finalizado";
 
+// SET RESULTADO
 
 export type SetResultado = {
   pareja1: number;
@@ -27,12 +30,15 @@ export type SetResultado = {
 };
 
 
-
+// RESULTADO PARTIDO
 
 export interface ResultadoPartido {
   sets: SetResultado[];
 }
 
+
+
+// ZONA
 
 export interface Zona {
   nombre: string;
@@ -40,12 +46,23 @@ export interface Zona {
   partidos: Partido[];
 }
 
+
+//COMPETENCIA
 export interface Competencia {
   zonas?: Zona[];
 
-  playoff?: Partido[];
+  playoff?: Fase[];
 
   formato: "eliminacion-directa" | "zonas-playoff";
 
   cantidadSets: 1 | 3 | 5;
+}
+
+
+//  FASE DE LA COMPTENCIA
+
+export interface Fase {
+  ronda: number;
+
+  partidos: Partido[];
 }
